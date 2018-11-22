@@ -1,0 +1,94 @@
+/* DivTable.com */
+@font-face {
+    font-family: myFirstFont;
+    src: url(../media/16/oxygen.otf);
+}
+body {
+	background-color:rgb(68, 65, 66);
+}
+div {
+	font-family: myFirstFont;
+}
+tbody {
+    display: table-row-group;
+    width: 100%;
+}
+td {
+		display:table-cell;
+		color:#E76F51;
+	border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgb(221, 221, 221);
+}
+
+.wrap {
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 6px;
+	background-color:rgb(245, 245, 245);
+		width:100%;
+		margin:10px;		
+	}
+	.programm {
+	color:#5ca25f;
+	text-align:center;
+}
+.sinavsaatitablosu {
+	display:table;
+	width: 100%;
+	font-size:30px;
+	border-collapse: seperate;
+	border-spacing:2px;
+	margin-bottom:10px;
+
+}
+
+.program, .derskodu, .dersadi {
+	display:table-row;
+	width:100%;
+		}
+	
+
+	
+
+.derskodu .label {
+	display:inline-block;
+ 	width : 35%;
+	color:#d99127;
+}
+		
+.dersadi .label {
+	display:inline-block;
+ 	width : 35%;
+	color:#d99127;
+}
+		
+.derskodu .value {
+display:inline-block;
+	border-top:1px dotted #f44336	;
+	border-bottom:1px dotted #f44336;
+	margin:15px;
+	padding-top:5px;
+	padding-bottom:5px;
+	color:#d44c9b;
+	background-color:rgb(247, 247, 247);
+
+}
+		
+.dersadi .value {
+	display:inline-block;
+	border-top:1px dotted #f44336	;
+	border-bottom:1px dotted #f44336;
+	margin:15px;
+	padding-top:5px;
+	padding-bottom:5px;
+	color:#2f3643;
+			font-weight:bold;
+	background-color:rgb(247, 247, 247);
+
+}
+
+	
+		
+		
+/* EDITOR PROPERTIES - PLEASE DON'T DELETE THIS LINE TO AVOID DUPLICATE PROPERTIES */

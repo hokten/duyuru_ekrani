@@ -1,0 +1,19 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <link rel="stylesheet" href="css/style.css">
+	  	  <link rel="stylesheet" href="css/slick.css">
+
+  </head>
+  <body>
+	   <asp:ContentPlaceHolder id="body" runat="server"></asp:ContentPlaceHolder>
+	  <script src="scripts/jquery.js"></script>
+	  <script src="scripts/slick.js"></script>
+	  <script src="scripts/vue.js"></script>
+	  <script src="scripts/axios.js"></script>
+	  <script src="scripts/autorefresh.js"></script>
+  </body>
+</html>

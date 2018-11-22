@@ -1,0 +1,44 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/masterpages/masterPage.master" AutoEventWireup="true" %>
+
+<asp:Content ContentPlaceHolderID="body" runat="server">
+	<div id="basari" style="height:100vh;">BAŞARILAR</div>
+<div id="app" class="slider">
+	<div class="wrap" v-for="(result, index) in results">
+		<p class="programm">{{ result.program }}</p>
+	<table class="sinavsaatitablosu">
+		<tbody>
+		<tr class="derskodu">
+			<td>
+				<div class="label">Dersin Kodu</div>
+				<div class="value">{{ result.dersin_kodu }}</div>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<div class="label">Dersin Adı</div>
+				<div class="value">{{ result.dersin_adi }}</div>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<div class="label">Sınav Tarihi</div>
+				<div class="value">{{ result.sinav_tarihi }}</div>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<div class="label">Sınav Saati</div>
+				<div class="value">{{ result.sinav_saati }}</div>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<div class="label">Sınav Salonları</div>
+				<div class="value"><span v-for="salon in salonParcala(result.sinav_salonlari)">{{ salon }}</span></div>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	</div>
+</div>
+</asp:Content>

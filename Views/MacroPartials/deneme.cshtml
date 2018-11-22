@@ -1,0 +1,5 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@foreach (var child in Model.Content.Children)
+{
+    @Umbraco.RenderTemplate(child.Id)
+}

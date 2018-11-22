@@ -1,0 +1,34 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
+	
+<umbraco:Macro runat="server" language="cshtml">
+	@inherits umbraco.MacroEngines.DynamicNodeContext
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+
+	@{
+	
+	
+	var contentTypeService = Umbraco.Core.ApplicationContext.Current.Services.ContentTypeService;
+    var mytype = contentTypeService.GetContentType("sinavSaatiTablosu"); 
+	var cts = Umbraco.Core.ApplicationContext.Current.Services.ContentService.GetContentOfContentType(mytype.Id);
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+	
+	foreach(var item in cts) {
+	 @item.Status;
+		<pre>
+		@Html.Raw(serializer.Serialize(item))
+</pre>
+	
+	}
+	}
+	
+
+
+</umbraco:Macro>
+
+
+
+</asp:Content>

@@ -1,0 +1,63 @@
+﻿<umbraco:Macro runat="server" language="cshtml">
+@inherits umbraco.MacroEngines.DynamicNodeContext
+	@using Newtonsoft.Json.Linq
+	@using umbraco.MacroEngines
+	@using umbraco.cms.businesslogic.datatype
+
+	@{
+		var dataTypeService = Umbraco.Core.ApplicationContext.Current.Services.DataTypeService;
+
+		var statusEditor = dataTypeService.GetAllDataTypeDefinitions().First(x => x.Name == "SinavSalonlari");
+	var preValueId = dataTypeService.GetPreValuesCollectionByDataTypeId(statusEditor.Id).PreValuesAsArray.Where(d => d.Value == "A101").Select(f => f.Id).First();
+	
+	
+	
+	
+	
+    var items = new List<dynamic>();
+	var contentTypeService = Umbraco.Core.ApplicationContext.Current.Services.ContentTypeService;
+    var mytype = contentTypeService.GetContentType("Sinavsaatitablosu"); 
+	var cts = Umbraco.Core.ApplicationContext.Current.Services.ContentService.GetContentOfContentType(mytype.Id);
+
+	var publishedPages = cts
+                .Where(y => y.Published == true)
+                .OrderByDescending(b => b.ReleaseDate);
+	
+	
+	string[] salonlarAsValues = {};
+	foreach(var item in publishedPages) 
+	{
+	
+	@*
+		@item.GetValue("salonlar").GetType()
+
+	var fff = item.GetValue("salonlar").ToString().Split(',').Select(Int32.Parse).ToList();
+	foreach(int cc in fff) {
+		@cc
+	}
+	*@
+	
+	
+	
+		DateTime zaman = item.GetValue<DateTime>("sinav_zamani");
+	items.Add(new {
+	program = item.GetValue("program"),
+
+		dersin_kodu = item.GetValue("dersin_kodu"),
+		dersin_adi = item.GetValue("dersin_adi"),
+	sinav_tarihi = zaman.ToString("dd-MM-yyyy"),
+	sinav_saati = zaman.ToString("HH:mm"),
+		sinav_salonlari = item.GetValue("salonlar")
+
+	});
+	}
+	var o = new {
+        items = items
+    };
+
+    string json = Json.Encode(o);
+    Response.ContentType = "application/json";
+}
+	@Html.Raw(json)
+
+</umbraco:Macro>
