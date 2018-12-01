@@ -1,0 +1,48 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/masterpages/giris.master" AutoEventWireup="true" %>
+
+<asp:content ContentPlaceHolderId="navbar" runat="server">
+<umbraco:Macro runat="server" language="cshtml">
+
+	@using Umbraco.Web.Security
+	@using Umbraco.Web
+	@using Umbraco.Core
+	@using Umbraco.Core.Services
+	@using Umbraco.Core.Models
+	@{
+		var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+		@Html.Raw(serializer.Serialize(Model))
+		var memberShipHelper = new Umbraco.Web.Security.MembershipHelper(Umbraco.Web.UmbracoContext.Current);
+		var kullanici = memberShipHelper.GetCurrentMember();
+		var bolum_id = memberShipHelper.GetCurrentMember().GetPropertyValue("bolumuu");	
+		var kullanici_ismi = memberShipHelper.GetCurrentMemberProfileModel().UserName;
+	
+	
+
+	
+	var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+IPublishedContent content = umbracoHelper.TypedContent(bolum_id);
+	var abc = umbracoHelper.Content(bolum_id);
+	var hocalar = abc.AncestorOrSelf("Birim").Descendants("Ogretim_elemani");
+	foreach(var child in  abc.Descendants("Ders")) {
+		@child.Name
+	}
+	foreach(var child in  hocalar) {
+		@child.Name
+	}
+
+	}
+
+<nav>
+    <div class="nav-wrapper">
+		<a href="#" class="brand-logo" style="font-family:Tahoma">Sınav Duyurusu Ekleme Paneli</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="badges.html">@kullanici_ismi</a></li>
+		  <li><a href="/logout.aspx"><i class="material-icons">power_settings_new</i></a></li>
+      </ul>
+    </div>
+  </nav>
+</umbraco:Macro>
+
+</asp:content>
+<asp:content ContentPlaceHolderId="form" runat="server"></asp:content>
+	<asp:content ContentPlaceHolderId="body" runat="server"></asp:content>

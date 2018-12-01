@@ -3,8 +3,23 @@
 	@using Newtonsoft.Json.Linq
 	@using umbraco.MacroEngines
 	@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+	@using System.Collections.Generic;
 
 	@{
+	     Dictionary<string, string> yayinlanma_durumlari = new Dictionary<string, string>();
+	yayinlanma_durumlari.Add("AwaitingRelease", "Yayınlanma Zamanını Bekliyor");
+		yayinlanma_durumlari.Add("Published", "Yayında");
+		yayinlanma_durumlari.Add("Expired", "Yayından Kaldırılmış");
+		yayinlanma_durumlari.Add("Unpublished", "Yayınlanmamış");
+
+	
+	
+
+	
+		var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+	var contentService = Umbraco.Core.ApplicationContext.Current.Services.ContentService;
+
 		var dataTypeService = Umbraco.Core.ApplicationContext.Current.Services.DataTypeService;
 
 		var statusEditor = dataTypeService.GetAllDataTypeDefinitions().First(x => x.Name == "SinavSalonlari");
@@ -20,15 +35,35 @@
 	var cts = Umbraco.Core.ApplicationContext.Current.Services.ContentService.GetContentOfContentType(mytype.Id);
 
 	var publishedPages = cts
-                .Where(y => y.Published == true)
-                .OrderByDescending(b => b.ReleaseDate);
+                .Where(y => y.Trashed == false)
+				.OrderByDescending(y => y.Status)
+                .ThenBy(b => b.GetValue<DateTime>("sinav_zamani"));
 	
 	
 	string[] salonlarAsValues = {};
 	foreach(var item in publishedPages) 
 	{
+	DateTime? expiredate = item.ExpireDate;
+	DateTime? releasedate = item.ReleaseDate;
+	string edate = "-";
+	string rdate = "-";
+	if(expiredate.HasValue) {
+	edate = ((DateTime)expiredate).ToString("dd-MM-yyyy HH:mm");
+	}
+	if(releasedate.HasValue) {
+	rdate = ((DateTime)releasedate).ToString("dd-MM-yyyy HH:mm");
+	}
 	
 	@*
+			var tum_gozetmenler_raw = item.GetValue("gozetmenler").ToString().Split(',').Select(Int32.Parse).ToList();
+			foreach(int gozetmen_raw in tum_gozetmenler_raw) {
+				@Html.Raw(serializer.Serialize(contentService.GetById(gozetmen_raw).GetValue("oe_adi_soyadi")))
+			}
+
+	
+@item.GetValue("gozetmenler").GetType();
+ 
+	
 		@item.GetValue("salonlar").GetType()
 
 	var fff = item.GetValue("salonlar").ToString().Split(',').Select(Int32.Parse).ToList();
@@ -40,14 +75,27 @@
 	
 	
 		DateTime zaman = item.GetValue<DateTime>("sinav_zamani");
+	if(item.ReleaseDate != null) {
+		DateTime ybastarihi = (DateTime)item.ReleaseDate;
+	}
+	
 	items.Add(new {
+	id = item.Id,
+	durum = yayinlanma_durumlari[item.Status.ToString()],
 	program = item.GetValue("program"),
+	yayindan_kaldirilma_zamani = edate,
+	yayinlanmasi_planlanan_zaman = rdate,
 
 		dersin_kodu = item.GetValue("dersin_kodu"),
 		dersin_adi = item.GetValue("dersin_adi"),
 	sinav_tarihi = zaman.ToString("dd-MM-yyyy"),
 	sinav_saati = zaman.ToString("HH:mm"),
-		sinav_salonlari = item.GetValue("salonlar")
+		sinav_salonlari = item.GetValue("salonlar"),
+			gozetmenler = item.GetValue("gozetmenler"),
+	ders_sorumlusu=item.GetValue("ders_sorumlusu"),
+	aciklama=item.GetValue("aciklama")
+
+
 
 	});
 	}

@@ -1,34 +1,32 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
-
+﻿<%@ Master Language="C#" MasterPageFile="~/masterpages/masterr.master" AutoEventWireup="true" %>
 <asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
-	
-<umbraco:Macro runat="server" language="cshtml">
-	@inherits umbraco.MacroEngines.DynamicNodeContext
-@using Newtonsoft.Json.Linq
-@using umbraco.MacroEngines
 
+	
+<umbraco:Macro  runat="server" language="cshtml">
+	@using Umbraco.Web.Security
+	@using Umbraco.Web
+	@using Umbraco.Core
+	@using Umbraco.Core.Services
 	@{
+@*
+	var mem = ApplicationContext.Current.Services.MemberTypeService.GetAll();
 	
+	            var newMember = ApplicationContext.Current.Services.MemberService.CreateMember("shs@ss.xom", "shs@ss.xom", "abc", "Member");
+ApplicationContext.Current.Services.MemberService.Save(newMember);
+                ApplicationContext.Current.Services.MemberService.SavePassword(newMember, "1234");
+                ApplicationContext.Current.Services.MemberService.AssignRole(newMember.Id, "xyz");
+	*@
 	
-	var contentTypeService = Umbraco.Core.ApplicationContext.Current.Services.ContentTypeService;
-    var mytype = contentTypeService.GetContentType("sinavSaatiTablosu"); 
-	var cts = Umbraco.Core.ApplicationContext.Current.Services.ContentService.GetContentOfContentType(mytype.Id);
 	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+	var memberShipHelper = new Umbraco.Web.Security.MembershipHelper(Umbraco.Web.UmbracoContext.Current);
 
-	
-	foreach(var item in cts) {
-	 @item.Status;
-		<pre>
-		@Html.Raw(serializer.Serialize(item))
-</pre>
-	
+	var xyz = ApplicationContext.Current.Services.MemberService.GetAllMembers();	
 	}
-	}
+	@Html.Raw(serializer.Serialize(memberShipHelper.Login("shs@ss.xom", "1235")))
+
 	
 
 
 </umbraco:Macro>
-
-
 
 </asp:Content>

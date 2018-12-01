@@ -1,0 +1,14 @@
+﻿<umbraco:Macro runat="server" language="cshtml">
+@inherits umbraco.MacroEngines.DynamicNodeContext
+	@using Newtonsoft.Json.Linq
+	@using umbraco.MacroEngines
+	@using umbraco.cms.businesslogic.datatype
+	@using Umbraco.Core.Models
+	@System.IO
+	@{
+		var StreamReader reader = new StreamReader();
+
+
+	}
+
+</umbraco:Macro>
