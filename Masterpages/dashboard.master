@@ -2,47 +2,72 @@
 
 <asp:content ContentPlaceHolderId="navbar" runat="server">
 <umbraco:Macro runat="server" language="cshtml">
-
-	@using Umbraco.Web.Security
-	@using Umbraco.Web
-	@using Umbraco.Core
-	@using Umbraco.Core.Services
-	@using Umbraco.Core.Models
-	@{
-		var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-		@Html.Raw(serializer.Serialize(Model))
-		var memberShipHelper = new Umbraco.Web.Security.MembershipHelper(Umbraco.Web.UmbracoContext.Current);
-		var kullanici = memberShipHelper.GetCurrentMember();
-		var bolum_id = memberShipHelper.GetCurrentMember().GetPropertyValue("bolumuu");	
-		var kullanici_ismi = memberShipHelper.GetCurrentMemberProfileModel().UserName;
-	
-	
-
+@using Umbraco.Web.Security
+@using Umbraco.Web
+@using Umbraco.Core
+@using Umbraco.Core.Services
+@using Umbraco.Core.Models
+@{
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+	@Html.Raw(serializer.Serialize(Model))
+	var memberShipHelper = new Umbraco.Web.Security.MembershipHelper(Umbraco.Web.UmbracoContext.Current);
+	var kullanici = memberShipHelper.GetCurrentMember();
+	var bolum_id = memberShipHelper.GetCurrentMember().GetPropertyValue("bolumuu");	
+	var kullanici_ismi = memberShipHelper.GetCurrentMemberProfileModel().UserName;
 	
 	var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
-IPublishedContent content = umbracoHelper.TypedContent(bolum_id);
+	IPublishedContent content = umbracoHelper.TypedContent(bolum_id);
 	var abc = umbracoHelper.Content(bolum_id);
-	var hocalar = abc.AncestorOrSelf("Birim").Descendants("Ogretim_elemani");
+	var tum_hocalar = abc.AncestorOrSelf("Birim").Descendants("Ogretim_elemani");
+	
 	foreach(var child in  abc.Descendants("Ders")) {
 		@child.Name
 	}
-	foreach(var child in  hocalar) {
-		@child.Name
+	foreach(var child in  tum_hocalar) {
+		@child.Id
+		<div>----</div>
+		
+		@child.GetPropertyValue("oegretim_elemani_ad_soyad")
 	}
-
-	}
+	
+}
 
 <nav>
-    <div class="nav-wrapper">
+	<div class="nav-wrapper">
 		<a href="#" class="brand-logo" style="font-family:Tahoma">Sınav Duyurusu Ekleme Paneli</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="badges.html">@kullanici_ismi</a></li>
-		  <li><a href="/logout.aspx"><i class="material-icons">power_settings_new</i></a></li>
-      </ul>
-    </div>
-  </nav>
+		<ul id="nav-mobile" class="right hide-on-med-and-down">
+			<li><a href="badges.html">@kullanici_ismi</a></li>
+			<li><a href="/logout.aspx"><i class="material-icons">power_settings_new</i></a></li>
+		</ul>
+	</div>
+</nav>
+<div class="input-field col s12">
+	
+	<select id="deneme" multiple>
+		<option value="" disabled>Choose your option</option>
+		@foreach(var hoca in tum_hocalar) {
+			<option value="@hoca.Id">@hoca.GetPropertyValue("oegretim_elemani_ad_soyad")</option>
+		}
+	</select>
+	<label>Materialize Multiple Select</label>
+</div>
 </umbraco:Macro>
 
 </asp:content>
-<asp:content ContentPlaceHolderId="form" runat="server"></asp:content>
-	<asp:content ContentPlaceHolderId="body" runat="server"></asp:content>
+
+
+<asp:content ContentPlaceHolderId="body" runat="server">
+
+
+
+
+
+</asp:content>
+
+<asp:content ContentPlaceHolderId="script" runat="server">
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#deneme').formSelect();    });
+		
+	</script>
+</asp:content>

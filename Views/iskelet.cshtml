@@ -1,4 +1,12 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" %>
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Umbraco.Web.Security
+@using Umbraco.Web
+@using Umbraco.Core
+@using Umbraco.Core.Services
+@using Umbraco.Core.Models	
+@{
+    Layout = null;
+}
 <!DOCTYPE html>
 <html>
   <head>
@@ -8,29 +16,24 @@
 	  <link rel="stylesheet" href="media/942/materializemin.css">
   </head>
 	<body style="background-color:white">
-		<asp:ContentPlaceHolder id="body" runat="server">
-			<asp:ContentPlaceHolder id="navbar" runat="server"></asp:ContentPlaceHolder>
-			
-			
-		  <asp:ContentPlaceHolder id="form" runat="server"></asp:ContentPlaceHolder>
-			<div class="container">
-		  <asp:ContentPlaceHolder id="content" runat="server"></asp:ContentPlaceHolder>
-		</div>
+	@RenderSection("nav", false)
+	<div id="container">
+		@RenderSection("body")
+	</div>
+	
+		
 	  <script src="scripts/jquery.js"></script>
 	  <script src="scripts/vue.js"></script>
 	  <script src="scripts/axios.js"></script>
 	  <script src="media/948/poppermin.js"></script>
-		<script src="/media/939/materializemin.js"></script>
-	 <asp:ContentPlaceHolder id="script" runat="server">
+	<script src="/media/939/materializemin.js"></script>
 		 <script type="text/javascript">
-
 		  	   $(document).ready(function() {
-						 
     $('#deneme').formSelect();
     });
+@RenderSection("script", false)
 
 </script>
-		</asp:ContentPlaceHolder>
 
 
   </body>

@@ -1,0 +1,34 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "iskelet.cshtml";
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+	 string username = Request.Form["username"];
+        string password = Request.Form["password"];
+
+}
+@section body {
+	@if (IsPost) {
+		if(Members.Login(username, password)) {
+			FormsAuthentication.SetAuthCookie(username, true);
+			Response.Redirect("/kontrolmerkezi.aspx");
+		}       
+    }
+	else {
+		<div class="row">
+			<div class="col s6 offset-s3 z-depth-1" id="panell">
+				<h5 id="title">Login Form</h5>
+				<form method="post">
+					<div class="input-field" id="username">
+						<input  type="text" class="validate" name="username" />
+						<label for="username">Username</label>
+					</div>
+					<div class="input-field" id="password">
+						<input  type="password" class="validate" name="password" />
+						<label for="password">Password</label>
+					</div>
+					<button class="btn waves-effect waves-light" type="submit" name="action">Submit<i class="material-icons right">send</i></button>
+				</form>
+			</div>
+		</div>
+	}
+}

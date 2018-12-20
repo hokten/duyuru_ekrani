@@ -1,0 +1,83 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+@using System.Collections.Generic;
+@functions{
+    public JArray JsonDiziOlustur(List<int> veri, string ozellik_adi){
+		JArray veri_dizisi = new JArray();
+		var contentService = ApplicationContext.Current.Services.ContentService;
+		foreach (int tekil_veri in veri) {
+			var content = contentService.GetById(tekil_veri);
+			string okunabilir_veri = content.GetValue<string>(ozellik_adi);
+			veri_dizisi.Add(okunabilir_veri);
+		}
+	 	return  veri_dizisi;
+    }
+}
+
+
+
+
+@{
+    Layout = null;
+	Dictionary<string, string> yayinlanma_durumlari = new Dictionary<string, string>();
+	yayinlanma_durumlari.Add("AwaitingRelease", "Yayınlanma Zamanını Bekliyor");
+	yayinlanma_durumlari.Add("Published", "Yayında");
+	yayinlanma_durumlari.Add("Expired", "Yayından Kaldırılmış");
+	yayinlanma_durumlari.Add("Unpublished", "Yayınlanmamış");
+	
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+	var contentService = ApplicationContext.Current.Services.ContentService;
+	var rootContent = contentService.GetById(1183);
+	var torunlar = contentService.GetDescendants(rootContent).Where(x => x.ContentType.Alias.Equals("Sinav"));
+	dynamic items = new JArray();
+	
+
+	foreach(var tekil in torunlar) {
+		dynamic satir = new JObject();
+		var salonlar = tekil.GetValue<string>("sinav_salonlari").Split(',').Select(Int32.Parse).ToList();
+		var gozetmenler = tekil.GetValue<string>("sinav_gozetmenleri").Split(',').Select(Int32.Parse).ToList();
+
+		
+		
+		satir.salonlar = JsonDiziOlustur(salonlar, "salonun_kodu");
+		satir.gozetmenler = JsonDiziOlustur(gozetmenler, "oegretim_elemani_ad_soyad");
+
+		items.Add(satir);
+		<h2>index</h2>
+		
+		
+@*
+		@Html.Raw(serializer.Serialize(tekil))
+
+		<b>Dersin Programları :</b>
+		@tekil.GetValue("dersin_programi")
+			<br />
+			<b>Sinav salonları:</b>
+		@tekil.GetValue("sinav_salonlari")
+
+		@tekil.GetValue("sinav_gozetmenleri")
+			<br />
+*@
+		IPublishedContent program = Umbraco.TypedContent(tekil.GetValue("dersin_programi"));
+	}
+	<hr />
+	dynamic product = new JObject();
+
+	product.ProductName = "Elbow Grease";
+product.Enabled = true;
+product.Price = 4.90m;
+product.StockCount = 9000;
+product.StockValue = 44100;
+product.Tags = new JArray(new JObject(
+             new JProperty("Date", DateTime.Now),
+	         new JProperty("Dae","dd")),
+						  new JObject(
+             new JProperty("Date", DateTime.Now),
+	         new JProperty("Dae","ddnn"))
+						 );
+}
+@Html.Raw(product.ToString())
+	@Html.Raw(items.ToString())
