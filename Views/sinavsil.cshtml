@@ -1,0 +1,27 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using System
+@using System.IO
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+@using System.Collections.Generic;
+
+@{
+  Layout = null;
+  dynamic donen = new JObject();
+
+  
+  var contentService = ApplicationContext.Current.Services.ContentService;
+  int silinecek_sinav_id = System.Convert.ToInt32(Request.QueryString["sinavid"]);
+	
+  
+    var silinecek_sinav = contentService.GetById(silinecek_sinav_id);
+	if (silinecek_sinav.Status == ContentStatus.Published) {
+		contentService.UnPublish(silinecek_sinav);
+	}
+	contentService.Delete(silinecek_sinav);
+	donen.durum = "true";
+		Response.ContentType = "application/json"; 
+}
+@Html.Raw(donen)

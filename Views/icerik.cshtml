@@ -4,6 +4,8 @@
 @using Umbraco.Core
 @using Umbraco.Core.Services
 @using Umbraco.Core.Models
+@using Newtonsoft.Json.Linq
+
 	
 @{
     Layout = "iskelet.cshtml";
@@ -18,8 +20,59 @@
 	
 	var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
 	IPublishedContent content = umbracoHelper.TypedContent(bolum_id);
-	var abc = umbracoHelper.Content(bolum_id);
-	var tum_hocalar = abc.AncestorOrSelf("Birim").Descendants("Ogretim_elemani");
+	
+  IEnumerable<IPublishedContent> tum_programlar = content.Descendants("Prog");
+  dynamic tum_programlar_dizisi = new JArray();
+  foreach(var prog in tum_programlar) {
+    dynamic prog_nesnesi = new JObject();
+    prog_nesnesi.progid = prog.Id;
+    prog_nesnesi.progadi = prog.GetPropertyValue<string>("programin_adi");	
+    tum_programlar_dizisi.Add(prog_nesnesi);
+  }
+
+	
+
+  
+  
+  IEnumerable<IPublishedContent> tum_hocalar = content.AncestorOrSelf("Birim").Descendants("Ogretim_elemani");
+	dynamic tum_hocalar_dizisi = new JArray();
+	foreach(var hoca in tum_hocalar) {
+		dynamic hoca_nesnesi = new JObject();
+		hoca_nesnesi.oeid = hoca.Id;
+		hoca_nesnesi.oeadisoyadi = hoca.GetPropertyValue<string>("oegretim_elemani_ad_soyad");	
+		tum_hocalar_dizisi.Add(hoca_nesnesi);
+	}
+	
+	
+	
+	IEnumerable<IPublishedContent> tum_salonlar = content.AncestorOrSelf("Birim").Descendants("Hall");
+	dynamic tum_salonlar_dizisi = new JArray();
+
+	foreach(var hall in tum_salonlar) {
+		dynamic salon_nesnesi = new JObject();
+		salon_nesnesi.salonid = hall.Id;
+		salon_nesnesi.salonadi = hall.GetPropertyValue<string>("salonun_kodu");	
+		tum_salonlar_dizisi.Add(salon_nesnesi);
+	}
+	
+	
+	IEnumerable<IPublishedContent> bolum_dersleri = content.Descendants("Ders");
+	dynamic bolum_dersleri_dizisi = new JArray();
+
+	foreach(var ders in bolum_dersleri) {
+		dynamic ders_nesnesi = new JObject();
+		ders_nesnesi.dersid = ders.Id;
+		ders_nesnesi.derskoduveadi = ders.GetPropertyValue<string>("dersin_kodu") + " - " + ders.GetPropertyValue<string>("dersin_adi");
+		bolum_dersleri_dizisi.Add(ders_nesnesi);
+	}
+
+	
+	
+	
+
+	
+	
+		
 	
 }
 @section nav {
@@ -35,171 +88,187 @@
 	
 }
 @section body {
-	<div id="app">
+<div id="app">
   <h4 class="head"> Application</h4>
-  <div class="container">
-	 <table class="table-responsive bordered highlight centered hoverable z-depth-2" v-show="results.length">
+  <div class="container" style="width:90%">
+    <table class="table-responsive bordered highlight centered hoverable z-depth-2" v-show="results.length">
       <thead>
         <tr>
           <th v-for="column in columns">
-            {{column}}
+            <span v-html="column"></span>
           </th>
         </tr>
       </thead>
-      <tbody>
-		  <tr v-for="(sinav,index) in results" :data-id="sinav.id">
-          <td>{{index}}</td>
+      <tbody v-if="results.length > 0">
+        <tr v-for="(sinav,index) in results" :data-id="sinav.id">
           <td>
-            {{sinav.dersin_kodu}}
+            {{sinav.derskodu}}
+            <br />
+            {{sinav.dersadi}}
+          </td>
+          <td style="width:15%">
+            <span v-if="sinav.sinavzamani !== null" style="display:inline-block" class="new badge blue" data-badge-caption=""> {{ sinav.sinavzamani.split(' ')[0] }}</span>
+            <span v-if="sinav.sinavzamani !== null" style="display:inline-block" class="new badge green" data-badge-caption=""> {{ sinav.sinavzamani.split(' ')[1] }}</span>
           </td>
           <td>
-            {{sinav.dersin_adi}}
+            <ul>
+              <li v-for="salon in sinav.salonlar"><span class="new badge red" data-badge-caption="">{{ salon }}</span></li>
+            </ul>
           </td>
           <td>
-            {{sinav.sinav_tarihi}} {{sinav.sinav_saati}}
+            <ul>
+              <li v-for="gozetmen in sinav.gozetmenler"><span class="new badge" data-badge-caption="">{{ gozetmen }}</span></li>
+            </ul>
           </td>
-          <td>
-            {{sinav.sinav_salonlari}}
-          </td>
-          <td>
-            {{sinav.gozetmenler}}
-          </td>
-		<td>
+          <td style="width:10%">
             {{sinav.durum}}
           </td>
-			<td>
-            {{sinav.yayinlanmasi_planlanan_zaman}}
+          <td style="width:10%">
+
+            <span style="display:inline-block" v-if="sinav.yayinlanmasi_planlanan_zaman !== null">{{ sinav.yayinlanmasi_planlanan_zaman.split(' ')[0] }}</span>
+            <br />
+            <span style="display:inline-block" v-if="sinav.yayinlanmasi_planlanan_zaman !== null">{{ sinav.yayinlanmasi_planlanan_zaman.split(' ')[1] }}</span>
+
           </td>
-			  <td>
-            {{sinav.yayindan_kaldirilma_zamani}}
+          <td style="width:10%">
+            <span style="display:inline-block; width:70%">{{sinav.yayindan_kaldirilma_zamani}}</span>
           </td>
           <td style="width: 18%;">
-            <a href="#modal" @@click="edit(index)" class="btn waves-effect waves-light yellow darken-2 modal-trigger"><i class="material-icons">edit</i>
+            <a href="#modal" class="btn waves-effect waves-light yellow darken-2 modal-trigger"><i class="material-icons">edit</i>
             </a>
-            <a href="#!" class="btn waves-effect waves-light red darken-2" @@click="archive(index)"><i class="material-icons">archive</i>
+            <a href="#!" class="btn waves-effect waves-light red darken-2" @@click="sil(sinav.id)"><i class="material-icons">delete</i>
             </a>
           </td>
         </tr>
-        <tr>
-          <td colspan="2">
-            <div class="input-field">
-              <input placeholder="Placeholder" ref="dkodu" v-model="input.dersin_kodu" id="dkodu" type="text">
-              <label for="lname">Last Name</label>
-            </div>
-          </td>
-          <td>
-            <div class="input-field">
-              <input placeholder="Placeholder" v-model="input.dersin_adi" id="dadi" type="text">
-              <label for="fname">First Name</label>
-            </div>
-          </td>
-          <td>
-            <div class="input-field">
-              <input placeholder="Placeholder" v-model="input.sinav_tarihi" id="starihi" type="text">
-              <label for="age">Age</label>
-            </div>
-          </td>
-          <td>
-            <div class="input-field">
-              <input placeholder="Placeholder" v-model="input.sinav_salonlari" id="salonlar" type="text">
-              <label for="job">Job</label>
-            </div>
-          </td>
-          <td>
-            <div class="input-field">
-              <input placeholder="Placeholder" v-model="input.gozetmenler" id="gozetmenler" type="text">
-              <label for="address">Address</label>
-            </div>
-          </td>
-          <td><a href="#!" @@click="add" class="btn btn-waves green darken-2"><i class="material-icons">add</i></a></td>
-        </tr>
-      </tbody>
+       </tbody>
     </table>
 
-    <table class="table-responsive centered bordered striped highlight z-depth-1 hoverable" v-show="bin.length">
-      <thead>
-        <tr>
-          <th v-for="column in columns">
-            {{column}}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(sinav,index) in bin">
-          <td>{{index}}</td>
-          <td>
-            {{sinav.dersin_kodu}}
-          </td>
-          <td>
-            {{sinav.dersin_adi}}
-          </td>
-          <td>
-            {{sinav.sinav_tarihi}} {{sinav.sinav_saati}}
-          </td>
-          <td>
-            {{sinav.sinav_salonlari}}
-          </td>
-          <td>
-            {{sinav.gozetmenler}}
-          </td>
-			<td>
-			            {{sinav.durum}}
-			</td>
-				<td>
-            {{sinav.yayinlanmasi_planlanan_zaman}}
-          </td>
-			  <td>
-            {{sinav.yayindan_kaldirilma_zamani}}
-          </td>
-          <td>
-            <a href="#!" @@click="restore(index)" class="btn waves-effect waves-light blue darken-2"><i class="material-icons">restore</i>
-            </a>
-            <a href="#!" @@click="deplete(index)" class="btn waves-effect waves-light red darken-2"><i class="material-icons">delete</i>
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
   </div>
 
   <div id="modal" class="modal modal-fixed-footer">
     <div class="modal-content">
-      <h4 class="center-align">Edit</h4>
-      <p class="center-align">Edition form. Update informations</p>
+      <h6 class="center-align">Sınav Duyurusu Ekle</h6>
       <div class="row">
-        <form class="col s12">
-          <div class="row">
-            <div class="input-field col s6">
-              <input placeholder="John" id="last_name" type="text" v-model="editInput.lname">
-              <label for="last_name">Last Name</label>
-            </div>
-            <div class="input-field col s6">
-              <input placeholder="Doe" id="first_name" type="text" v-model="editInput.fname">
-              <label for="first_name">First Name</label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="input-field col s6">
-              <input placeholder="26" id="edit_age" type="text" v-model="editInput.age">
-              <label for="edit_age">Age</label>
-            </div>
-            <div class="input-field col s6">
-              <input placeholder="Teacher" id="edit_job" type="text" v-model="editInput.job">
-              <label for="edit_job">Job</label>
+        <form @@submit="checkForm" id="eklemeformu" class="col s12">
+
+
+   <div class="row">
+            <div class="input-field col s12">
+
+              <select ref="dprogram" v-model="input.dersin_programi" id="dprogram" name="dprogram" class="validate" required="">
+                <option value="" disabled>Program Seçiniz</option>
+                <option v-for="prg in programlar" v-bind:value="prg.progid">{{ prg.progadi }}</option>
+              </select>
+              <label for="dprogram">Program</label>
+
             </div>
           </div>
+
+
+
+
           <div class="row">
             <div class="input-field col s12">
-              <input placeholder="Address" id="edit_address" type="text" v-model="editInput.address">
-              <label for="edit_address">First Name</label>
+
+              <select ref="dkodu" v-model="input.dersin_kodu" id="dkodu" name="dkodu" class="validate" required="">
+                <option value="" disabled>Ders Seçiniz</option>
+                <option v-for="ders in bolumdersleri" v-bind:value="ders.dersid">{{ ders.derskoduveadi }}</option>
+              </select>
+              <label for="dkodu">Ders</label>
+
             </div>
           </div>
+
+
+
+
+
+          <div class="row">
+            <div class="input-field col s12">
+              <select ref="e_ders_sorumlusu" v-model="input.ders_sorumlusu" id="e_ders_sorumlusu" class="validate" required="">
+                <option value="" disabled>Öğretim Elemanı Seçiniz</option>
+                <option v-for="hoca in tumhocalar" v-bind:value="hoca.oeid">{{ hoca.oeadisoyadi }}</option>
+              </select>
+              <label for="e_ders_sorumlusu">Ders Sorumlusu</label>
+            </div>
+          </div>
+
+
+
+
+
+          <div class="row">
+            <div class="input-field col s12">
+              <select multiple ref="e_salonlar" v-model="input.salonlar" id="e_salonlar">
+                <option value="" disabled>Salonları Seçiniz</option>
+                <option v-for="salon in tumsalonlar" v-bind:value="salon.salonid">{{ salon.salonadi }}</option>
+              </select>
+              <label for="e_gozetmenler">Salonlar</label>
+            </div>
+
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+          <div class="row">
+            <div class="input-field col s12">
+              <select multiple ref="e_gozetmenler" v-model="input.gozetmenler" id="e_gozetmenler">
+                <option value="" disabled>Gözetmenleri Seçiniz</option>
+                <option v-for="hoca in tumhocalar" v-bind:value="hoca.oeid">{{ hoca.oeadisoyadi }}</option>
+              </select>
+              <label for="e_gozetmenler">Gözetmenler</label>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+
+
+
+          <div class="row">
+            <div class="input-field col s6">
+              <input type="text" name="e_sinavtarihi" id="e_sinavtarihi" ref="e_sinavtarihi" v-model.lazy="tarih" class="datepicker" required="">
+              <label for="e_sinavtarihi">Sınav Tarihi</label>
+
+            </div>
+            <div class="input-field col s6">
+              <input type="text" name="e_sinavsaati" id="e_sinavsaati" ref="e_sinavsaati" v-model.lazy="input.saat" class="timepicker">
+
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+          <button type="submit" form="eklemeformu" class="waves-effect waves-green btn-flat">Submit</button>
+
         </form>
       </div>
     </div>
     <div class="modal-footer">
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-      <a href="#!" @@click="update" class="btn waves-effect waves-light"><i class="material-icons">edit</i></a>
+      <a href="#!" class="btn waves-effect waves-light" @@click="checkForm"><i class="material-icons">edit</i></a>
     </div>
   </div>
 </div>
@@ -208,79 +277,198 @@
 
 
 @section script {
-	const url = "/sinavsaatlerijson.aspx";
-	var vm = new Vue({
-		el: '#app',
-			 data: {
-	  columns: ['Index', 'Dersin Kodu', 'Dersin Adı', 'Tarih/Saat', 'Salonlar', 'Gözetmenler', 'Yayın Durumu', 'Yayınlanması Planlanan Zaman', 'Yayından Kaldırılacağı Zaman', 'Eylemler '],
-    results: [],
-    bin: [],
-    input: {},
-	  editInput:{}
-  },
-			  
-  created: function () {
-		this.fetchData();
-	},
-  methods: {
-	  fetchData: function (event) {
-			axios.get(url).then(response => {
-				console.log(response);
-				this.results = response.data.items;
+  $.validator.addMethod("valueNotEquals", function(value, element, arg){
+    return arg !== value;
+  }, "Value must not equal arg.");
+    var uzun_aylar_tr = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    var kisa_aylar_tr = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    var haftanin_gunleri_uzun_tr =  ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+    var haftanin_gunleri_kisa_tr =  ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+    var haftanin_gunleri_harf_tr = ['P', 'P', 'S', 'Ç', 'P', 'C', 'C'];
 
 
-			})
-		},
-			  
-			  
-			  
-			  
-	  add: function() {
-		  
-		  axios.put('/sinavapi.aspx?umbdebugshowtrace=true', {
-    firstName: 'Fred',
-    lastName: 'Flintstone'
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-		  
-		  
-      this.results.push({
-        dersin_kodu: this.input.dersin_kodu,
-        dersin_adi: this.input.dersin_adi,
-        sinav_salonlari: this.input.sinav_salonlari,
-        sinav_tarihi: this.input.sinav_tarihi,
-        gozetmenler: this.input.gozetmenler
-      });
 
-      for (var key in this.input) {
-        this.input[key] = '';
+
+  $(document).ready(function() {
+
+
+
+    //$('#deneme').formSelect();
+    $('select').formSelect();
+    $("select[required]").css({position: "absolute", display: "inline", height: 0, padding: 0, width: 0});
+
+
+    $('.modal').modal();
+    $('.timepicker').timepicker({
+      container: 'body',
+      twelveHour : false
+    });
+    $('.datepicker').datepicker({
+      container: 'body',
+      format: 'd mmmm yyyy',
+      i18n : {
+        months : uzun_aylar_tr, 
+        monthsShort : kisa_aylar_tr,
+        weekdays :  haftanin_gunleri_uzun_tr,
+        weekdaysShort : haftanin_gunleri_kisa_tr,
+        weekdaysAbbrev : haftanin_gunleri_harf_tr
       }
-      this.$refs.dkodu.focus();
-    },
-    //function to handle data edition
-    edit: function(index) {
-		 this.editInput = this.results[index];
-      console.log(this.editInput);
-      this.results.splice(index, 1);
-	},
-    //function to send data to bin
-    archive: function(index) {},
-    //function to restore data
-    restore: function(index) { },
-    //function to update data
-    update: function(){},
-    //function to defintely delete data 
-    deplete: function(index) {}
-  }
-});
+    })
 
-//function to sort table data alphabetically
-var ordonner = function(a, b) {
-  return (a.lname > b.lname);
-};
+
+
+
+    $('#eklemeformu').validate({
+      rules: {
+
+        dkodu: { 
+          valueNotEquals: "",
+          required: true,
+
+        }
+      },
+      messages: {
+        dkodu: { 
+          valueNotEquals: "Please select an item!",
+          required: "We need your email address to contact you",
+
+        }
+      }  ,
+      errorElement : "div",
+      errorPlacement : function(error, element) {
+        var placement = $(element).data('error');
+        alert(placement);
+        if (placement) {
+          $(placement).append(error)
+        } else {
+          error.insertAfter(element);
+        }
+      }
+    });
+
+
+
+
+  });
+
+  const url = "/returnjson.aspx?bolumid=@bolum_id";
+  var vm = new Vue({
+    el: '#app',
+    data: {
+    columns: ['Dersin Kodu ve Adı', 'Tarih/Saat', 'Salonlar', 'Gözetmenler', 'Yayın Durumu', 'Yayınlanması<br />Planlanan<br /> Zaman', 'Yayından Kaldırılacağı Zaman', 'Eylemler '],
+      programlar : @Html.Raw(tum_programlar_dizisi.ToString(Newtonsoft.Json.Formatting.None)),
+      tumsalonlar : @Html.Raw(tum_salonlar_dizisi.ToString(Newtonsoft.Json.Formatting.None)),
+      tumhocalar : @Html.Raw(tum_hocalar_dizisi.ToString(Newtonsoft.Json.Formatting.None)),
+      bolumdersleri : @Html.Raw(bolum_dersleri_dizisi.ToString(Newtonsoft.Json.Formatting.None)),
+
+
+
+      results: [],
+      bin: [],
+      input: {},
+      editInput:{},
+      tarih: null
+    },
+
+    created: function () {
+      this.fetchData();
+    },
+    watch: {
+      tarih : function(val) {
+        var tarih_dizisi = val.split(' ');
+        var ay = uzun_aylar_tr.indexOf(tarih_dizisi[1]) + 1;
+        this.input.sinavtarihi = tarih_dizisi[0] + "-" + ay + "-" + tarih_dizisi[2];
+      }
+    },
+    methods: {
+      checkForm: function (e) {
+        var eform = $("#eklemeformu");
+        var self = this;
+        eform.validate();
+        if(eform.valid()) {
+
+        axios.put('/sinavapi.aspx?umbdebugshowtrace=true', this.input)
+          .then(function (response) {
+            if(!jQuery.isEmptyObject(response.data)) {
+              console.log(response);
+              self.results.push(response.data);
+              $('.modal').modal('close');
+
+
+            }
+          })
+            .catch(function (error) {
+              console.log(error);
+          });
+        }
+      },
+      fetchData: function (event) {
+        axios.get(url).then(response => {
+          console.log(response);
+          this.results = response.data;
+
+
+        })
+      },
+
+
+
+
+      add: function() {
+
+            axios.put('/sinavapi.aspx?umbdebugshowtrace=true', {
+          firstName: 'Fred',
+          lastName: 'Flintstone'
+        })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+
+        this.results.push({
+          dersin_kodu: this.input.dersin_kodu,
+          dersin_adi: this.input.dersin_adi,
+          sinav_salonlari: this.input.sinav_salonlari,
+          sinav_tarihi: this.input.sinav_tarihi,
+          gozetmenler: this.input.gozetmenler
+        });
+
+        for (var key in this.input) {
+          this.input[key] = '';
+        }
+        this.$refs.dkodu.focus();
+      },
+      //function to handle data edition
+      sil: function(nodeid) {
+        console.log(nodeid);
+        var self = this;
+        axios.delete('/sinavsill.aspx?sinavid='+nodeid)
+          .then(function (response) {
+            var index = self.results.findIndex(x => x.id==nodeid);
+            self.results.splice(index,1);
+            console.log(index);
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
+    //function to send data to bin
+    archive: function(index) {console.log(index);},
+      //function to restore data
+      restore: function(index) { },
+      //function to update data
+      update: function(){},
+      //function to defintely delete data 
+      deplete: function(index) {}
+    }
+  });
+
+  //function to sort table data alphabetically
+  var ordonner = function(a, b) {
+    return (a.lname > b.lname);
+  };
 }

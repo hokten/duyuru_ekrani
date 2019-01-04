@@ -12,8 +12,20 @@
   <head>
     <title>title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  <link rel="stylesheet" href="css/style.css">
-	  <link rel="stylesheet" href="media/942/materializemin.css">
+	  <link rel="stylesheet" href="/css/style.css">
+	  <link rel="stylesheet" href="/css/materialize-1.0.0.css">
+	<style>
+	.modal {
+	 max-height: 90% !important;
+		top: 5% !important
+	}
+	div.error {
+  color: rgba(255, 0, 0, 0.4);
+  margin-top: -8px;
+  padding: 0;
+  font-size: 0.8em;
+}
+	</style>
   </head>
 	<body style="background-color:white">
 	@RenderSection("nav", false)
@@ -26,11 +38,10 @@
 	  <script src="scripts/vue.js"></script>
 	  <script src="scripts/axios.js"></script>
 	  <script src="media/948/poppermin.js"></script>
-	<script src="/media/939/materializemin.js"></script>
+	<script src="/scripts/materialize-1.0.0.js"></script>
+	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
 		 <script type="text/javascript">
-		  	   $(document).ready(function() {
-    $('#deneme').formSelect();
-    });
+
 @RenderSection("script", false)
 
 </script>
