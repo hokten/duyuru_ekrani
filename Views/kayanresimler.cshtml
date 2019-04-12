@@ -1,0 +1,90 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json;
+@{
+    Layout = null;
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style>
+	@@font-face {
+  font-family: JosefinBold;
+  src: url(/media/52532/josefinsans-bold.ttf);
+}
+.marquee {
+  width: 100%;
+	/*height:100vh;*/
+
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background: #FFFFFF;
+}
+.marquee img {
+	display:block;
+	width:98%;
+	border:2px solid red;
+	margin-left:auto;
+	margin-right:auto
+}
+.baslik {
+	text-shadow: 2px 2px 2px rgba(150, 150, 150, 0.93);
+	font-family:JosefinBold;
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+	margin-top:100px;
+	margin-bottom:100px;
+	font-size:40px;
+
+}
+
+	
+	
+
+	</style>
+	
+	
+  </head>
+
+  <body>
+		<div id="container" class="marquee ver" data-direction='up'  data-pauseOnHover="false">
+			@foreach (var item in Model.Content.Children()) {
+								<div class="baslik">@item.Name</div>
+
+			  <img src="@item.GetPropertyValue("imageFile")" />
+	  }
+			</div>
+				<a href="#">sfdsdf</a>
+
+<script type='text/javascript' src='/scripts/jquery-3.3.1.js'></script>
+				
+
+  <script type='text/javascript' src='/scripts/jquery.marquee.min.js'></script>
+				<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+				
+				<script type='text/javascript'>
+				$(document).ready(function() {
+					$('a').click(function(){
+    $('html, body').animate({
+        scrollTop: 0
+    },5000, 'easeOutExpo');
+
+    return false;
+});
+				});
+				/*
+				$('.marquee').marquee({delayBeforeStart: 0, duration : 15000, duplicated : true, allowCss3Support:true,  css3easing :'ease-in-out'});
+$(window).on('resize', function () {
+    $('#container').css('height', '100vh');
+}).resize();
+*/
+</script>
+</body>
+</html>

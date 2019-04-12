@@ -1,0 +1,76 @@
+<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
+	
+	
+ <!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+ <META http-equiv="Refresh" content="60; url=http://ekran.amasya.edu.tr/">
+	  
+	  
+
+
+ <script src="scripts/jquery-3.3.1.js"></script>
+  <link href="css/tbmyo_ekran.css" rel="stylesheet">
+  <script src="scripts/tbmyo_ekran.js"></script>
+  <script language="javascript">
+    $(document).ready(function () {
+      $("div").smartmarquee();
+    });
+  </script>
+  <style type="text/css">
+    body {
+      font-family: tahoma;
+      font-size: 30px;
+    }
+    a { cursor: pointer }
+    .example {
+      height: 1000px;
+      width: 1900px;
+      -moz-box-shadow: 1px 1px 5px #999;
+      -webkit-box-shadow: 1px 1px 5px #999;
+      box-shadow: 1px 1px 5px #999;
+    }
+    .example .container {
+      margin: 0;
+      padding: 0;
+    }
+    .example .container li {
+      width: 1650px;
+      margin: 0 0 0 5px;
+      padding: 5px 0 5px 0;
+      border-bottom: 1px dotted #999
+       
+    }
+  </style>
+</head>
+
+<body>
+	<div style="padding-top:8px;width:99%; text-align:center; font-size:0.8em">
+		TEKNİK BİLİMLER MESLEK YÜKSEKOKULU<br />SINAV SALONU BİLGİ EKRANI
+	</div>
+  <div class="smartmarquee example">
+    <ul class="container">
+		<umbraco:Macro source="1318" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1319" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1320" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1321" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1322" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1323" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1324" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1325" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1326" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+       <umbraco:Macro source="1327" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1328" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1329" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1330" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1331" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+				
+		
+    </ul>
+  </div>
+
+</asp:Content>

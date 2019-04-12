@@ -11,13 +11,16 @@
 <html>
   <head>
     <title>title</title>
+	<meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	  <link rel="stylesheet" href="/css/style.css">
-	  <link rel="stylesheet" href="/css/materialize-1.0.0.css">
+	  <link rel="stylesheet" href="/css/materialize.css">
 	<style>
 	.modal {
+		min-height: 90% !important;
 	 max-height: 90% !important;
-		top: 5% !important
+		top: 5% !important;
+		font-size:0.7em
 	}
 	div.error {
   color: rgba(255, 0, 0, 0.4);
@@ -37,9 +40,9 @@
 	  <script src="scripts/jquery.js"></script>
 	  <script src="scripts/vue.js"></script>
 	  <script src="scripts/axios.js"></script>
-	  <script src="media/948/poppermin.js"></script>
-	<script src="/scripts/materialize-1.0.0.js"></script>
-	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
+	  <script src="scripts/poppermin.js"></script>
+	<script src="scripts/materialize.js"></script>
+	<script  src="scripts/jquery-validate-min.js"></script>
 		 <script type="text/javascript">
 
 @RenderSection("script", false)

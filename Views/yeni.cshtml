@@ -1,0 +1,96 @@
+  @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json;
+@{
+    Layout = null;
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style>
+	@@font-face {
+  font-family: JosefinBold;
+  src: url(/media/52532/josefinsans-bold.ttf);
+}
+html {
+	background-color:#111111;
+
+}
+.marquee {
+  width: 800px;
+			background-color:#111111;
+
+  background: #FFFFFF;
+	margin-left:auto;
+	margin-right:auto;
+}
+.marquee img {
+		background-color:#111111;
+
+	display:block;
+	width:100%;
+	padding:0;
+}
+
+
+	
+	
+
+	</style>
+	
+	
+  </head>
+
+  <body>
+		<div id="container" class="marquee ver">
+			@foreach (var item in Model.Content.Children()) {
+			  <img src="@item.GetPropertyValue("imageFile")" />
+	  }
+@foreach (var item in Model.Content.Children()) {
+			  <img src="@item.GetPropertyValue("imageFile")" />
+	  }
+			</div>
+		
+<script type='text/javascript' src='/scripts/jquery-3.3.1.js'></script>
+					<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.min.js"></script>
+
+<script>
+					$(document).ready(function(){					
+					
+					var body = $("html, body");
+						var i=0;
+						var ekran_yuksekligi = $(window).height();
+
+
+	
+					var abc = function yap() {
+						var pozisyon = "-="+ekran_yuksekligi+"px";
+							console.log(pozisyon);
+				
+						$('#container').velocity({translateY: "-=500px"},
+												 {
+													   'duration': 3000,
+														   'easing':'swing',
+        'complete': function(){
+          console.log("oldu");
+        }
+      });
+						
+						
+					}						
+						setInterval(abc, 5000); //no parenthesis
+
+					 
+					
+				
+				});
+
+</script>
+</body>
+</html>

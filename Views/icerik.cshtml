@@ -11,7 +11,7 @@
     Layout = "iskelet.cshtml";
 	
 	if(!Members.IsLoggedIn()) {
-		Response.Redirect("/ff.aspx");
+		Response.Redirect("/giris.aspx");
 	}
 	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
 	var kullanici = Members.GetCurrentMember();
@@ -34,7 +34,7 @@
 
   
   
-  IEnumerable<IPublishedContent> tum_hocalar = content.AncestorOrSelf("Birim").Descendants("Ogretim_elemani");
+  IEnumerable<IPublishedContent> tum_hocalar = content.AncestorOrSelf("Birim").Descendants("Ogretim_elemani").OrderBy("oegretim_elemani_ad_soyad");
 	dynamic tum_hocalar_dizisi = new JArray();
 	foreach(var hoca in tum_hocalar) {
 		dynamic hoca_nesnesi = new JObject();
@@ -56,7 +56,7 @@
 	}
 	
 	
-	IEnumerable<IPublishedContent> bolum_dersleri = content.Descendants("Ders");
+	IEnumerable<IPublishedContent> bolum_dersleri = content.Descendants("Ders").OrderBy("dersin_kodu");;
 	dynamic bolum_dersleri_dizisi = new JArray();
 
 	foreach(var ders in bolum_dersleri) {
@@ -90,8 +90,8 @@
 @section body {
 <div id="app">
   <h4 class="head"> Application</h4>
-  <div class="container" style="width:90%">
-    <table class="table-responsive bordered highlight centered hoverable z-depth-2" v-show="results.length">
+  <div class="container" style="width:95%; font-weight:bold">
+    <table class="table-responsive bordered highlight centered hoverable z-depth-2">
       <thead>
         <tr>
           <th v-for="column in columns">
@@ -112,12 +112,12 @@
           </td>
           <td>
             <ul>
-              <li v-for="salon in sinav.salonlar"><span class="new badge red" data-badge-caption="">{{ salon }}</span></li>
+              <li v-for="salon in sinav.salonlar"><span style="height:auto; font-weight:bold" class="new badge red" data-badge-caption="">{{ salon }}</span></li>
             </ul>
           </td>
           <td>
             <ul>
-              <li v-for="gozetmen in sinav.gozetmenler"><span class="new badge" data-badge-caption="">{{ gozetmen }}</span></li>
+              <li v-for="gozetmen in sinav.gozetmenler"><span style="width:100%; font-size:0.9em; margin-bottom:2px; margin-top:2px; display:inline-block; background-color:rgb(80,170,80); color:white;border-radius: 2px 2px 2px 2px; -moz-border-radius: 2px 2px 2px 2px; -webkit-border-radius:2px 2px 2px 2px; border: 0px solid #000000; padding-left:3px; padding-right:3px">{{ gozetmen }}</span></li>
             </ul>
           </td>
           <td style="width:10%">
@@ -141,12 +141,15 @@
           </td>
         </tr>
        </tbody>
+		<tfoot>
+			<tr><td colspan="8"><a href="#modal" class="btn waves-effect waves-light yellow darken-2 modal-trigger"><i class="material-icons">edit</i>
+            </a></td></tr></tfoot>
     </table>
 
 
   </div>
 
-  <div id="modal" class="modal modal-fixed-footer">
+  <div id="modal" class="modal modal-fixed-footer" style="max-height:90%; font-size:0.8em">
     <div class="modal-content">
       <h6 class="center-align">Sınav Duyurusu Ekle</h6>
       <div class="row">
@@ -351,7 +354,7 @@
 
   });
 
-  const url = "/returnjson.aspx?bolumid=@bolum_id";
+  const url = "/tumsinavlarjson.aspx?bolumid=@bolum_id";
   var vm = new Vue({
     el: '#app',
     data: {

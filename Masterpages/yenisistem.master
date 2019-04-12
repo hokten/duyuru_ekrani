@@ -1,0 +1,84 @@
+<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
+	
+
+
+
+<umbraco:Item field="Tbmyo_sinav" runat="server" />
+
+<umbraco:Macro  runat="server" language="cshtml">
+@inherits umbraco.MacroEngines.DynamicNodeContext
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+
+	@{
+	var json = System.IO.File.ReadAllText(Server.MapPath("~/media/52373/deneme.json"));
+	var jArray = JArray.Parse(json);
+
+    if (jArray.Count > 0)
+    {
+        <ul>
+            @foreach (dynamic x in jArray)
+            {
+
+            <li>@x.dersinadi, @x.ogretimelemani</li>
+            }
+        </ul>
+    }
+	
+	
+	
+	
+	
+	var contentTypeService = Umbraco.Core.ApplicationContext.Current.Services.ContentTypeService;
+    var mytype = contentTypeService.GetContentType("Tbmyo_sinav"); 
+	var cts = Umbraco.Core.ApplicationContext.Current.Services.ContentService.GetContentOfContentType(mytype.Id);
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+		 
+	
+	}
+		
+	@foreach(var item in cts) {
+	if(item.HasProperty("tarihSaat")) {
+	if(!String.IsNullOrEmpty(item.GetValue("tarihSaat").ToString())) {
+	 @DateTime.Parse(item.GetValue("tarihSaat").ToString());
+		
+	}
+
+	}
+	
+	@*
+	@String.IsNullOrEmpty(@item.GetValue("tarihSaat"))
+
+	if(!string.IsNullOrEmpty(@item.GetValue("tarihSaat")) {
+	<b>657</b>
+	}
+	
+	var saat = DateTime.Parse(item.GetValue("tarihSaat"));
+	
+	
+	 Umbraco.Core.ApplicationContext.Current.Services.ContentService.UnPublish(item);
+	
+	if(item.tarihSaat) {
+		item.ExpireDate = item.tarihSaat.AddMinutes(-15);
+		item.ReleaseDate = item.tarihSaat.AddMinutes(15);
+		Umbraco.Core.ApplicationContext.Current.Services.ContentService.Save(item);
+	}
+	*@
+
+	
+	 @item.GetValue("dersinadi")
+	@* @Html.Raw(serializer.Serialize(item.Properties)) *@
+	}
+	
+
+
+</umbraco:Macro>
+
+
+
+
+
+
+</asp:Content>

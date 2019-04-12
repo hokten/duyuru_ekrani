@@ -1,0 +1,38 @@
+.smartmarquee {
+  position: relative;
+  overflow: hidden;
+}
+.smartmarquee .container {
+  position: absolute;
+}
+html, body {
+    margin: 0;
+    width: 100%  !important;
+	overflow-y:hidden;
+
+}
+table {
+	width:99%;  !important;
+}
+td:first-child { 
+	width:25%  !important;
+	font-size:0.7em !important;
+}
+table tr td:nth-child(2) {
+	width:70%  !important;
+}
+.example .container li {
+	  width: 100%  !important;
+      margin: 0 0 0 5px;
+      padding: 5px 0 5px 0;
+      border-bottom: 1px dotted #999
+       
+ }
+.container {
+		width:100% !important;
+		
+	}
+	.example {
+		width:100% !important;
+		
+/* EDITOR PROPERTIES - PLEASE DON'T DELETE THIS LINE TO AVOID DUPLICATE PROPERTIES */

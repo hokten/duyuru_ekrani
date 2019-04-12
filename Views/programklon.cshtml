@@ -1,0 +1,22 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+@using System.Collections.Generic;
+
+@{
+	var contentService = ApplicationContext.Current.Services.ContentService;
+	IContent aktif_program = contentService.GetById(3633);
+	IEnumerable<IContent> dersler = contentService.GetDescendants(aktif_program).Where(x => x.ContentType.Alias.Equals("Ders"));
+	string[] ortak = { "AIT101", "YDL101", "TDL101", "AIT102", "YDL102", "TDL102" };
+    foreach (IContent ders in dersler)
+	{
+		if(!ortak.Contains(ders.Name)) {
+			var ders_kodu = "G"+ders.Name;
+			ders.Name = ders_kodu;
+			ders.SetValue("dersin_kodu", ders_kodu);
+			contentService.Save(ders);
+		}
+    }
+}

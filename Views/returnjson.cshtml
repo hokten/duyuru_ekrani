@@ -1,4 +1,4 @@
-﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @using Newtonsoft.Json.Linq
 @using umbraco.MacroEngines
 @using umbraco.cms.businesslogic.datatype
@@ -20,8 +20,11 @@
 }
 
 @{
-  Layout = null;
-  var kullanici_ismi = Members.GetCurrentMemberProfileModel().UserName;
+	Layout = null;
+	var kullanici = Members.GetCurrentMember();
+	int aktif_bolum_id = kullanici.GetPropertyValue<int>("bolumuu");
+	
+	
   Dictionary<string, string> yayinlanma_durumlari = new Dictionary<string, string>();
   yayinlanma_durumlari.Add("AwaitingRelease", "Yayınlanma Zamanını Bekliyor");
   yayinlanma_durumlari.Add("Published", "Yayında");
@@ -30,10 +33,20 @@
   var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
   var contentService = ApplicationContext.Current.Services.ContentService;
   dynamic items = new JArray();
-  IContent aktif_program = contentService.GetById(1183);
+  IContent aktif_program = contentService.GetById(aktif_bolum_id);
+
   if(aktif_program != null) {
     IEnumerable<IContent> yayinda_olan_sinavlar = contentService.GetDescendants(aktif_program).Where(x => x.ContentType.Alias.Equals("Sinav"));
     foreach(var tekil_sinav in yayinda_olan_sinavlar) {
+		var sinav_zamani_datetime = tekil_sinav.GetValue<DateTime>("sinav_tarihi_ve_saati");
+		if(sinav_zamani_datetime.AddMinutes(15) < DateTime.Now) {
+			if(tekil_sinav.Published) {contentService.UnPublish(tekil_sinav);}
+			contentService.Delete(tekil_sinav);
+			umbraco.library.RefreshContent();
+		}
+		else if(DateTime.Now >= sinav_zamani_datetime.AddMinutes(-15) && DateTime.Now <= sinav_zamani_datetime.AddMinutes(15))  
+		{
+
       dynamic satir = new JObject();
       int ders_id = tekil_sinav.GetValue<int>("sinavin_dersi");
       var ders_node = contentService.GetById(ders_id);
@@ -45,8 +58,9 @@
       var gzetmenler = tekil_sinav.GetValue<string>("sinav_gozetmenleri").Split(',').Select(Int32.Parse).ToList();
       var slonlar = tekil_sinav.GetValue<string>("sinav_salonlari").Split(',').Select(Int32.Parse).ToList();
 
-      DateTime? expiredate = tekil_sinav.ExpireDate;
       DateTime? releasedate = tekil_sinav.ReleaseDate;
+			      DateTime? expiredate = tekil_sinav.ExpireDate;
+
       string edate = null;
       string rdate = null;
       if(expiredate.HasValue) {
@@ -59,7 +73,7 @@
 
 
       satir.id = tekil_sinav.Id;
-      satir.username = kullanici_ismi;
+      @* satir.username = kullanici_ismi; *@
       satir.derskodu = derskodu;
       satir.dersadi = dersadi;
       satir.sinavzamani = sinav_zamani;
@@ -92,6 +106,7 @@
 
         IPublishedContent program = Umbraco.TypedContent(tekil_si.GetValue("dersin_programi"));
       *@
+		}
     }
   }
 

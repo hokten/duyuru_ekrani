@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<umbPackage>
+  <info>
+    <package>
+      <name>uSync.BackOffice</name>
+      <version>4.0.9</version>
+      <license url="https://opensource.org/licenses/MPL-2.0">Mozilla Public License 2.0</license>
+      <url>http://jumoo.uk/uSync</url>
+      <iconUrl>http://jumoo.co.uk/img/usyncicon.png</iconUrl>
+      <requirements>
+        <major>7</major>
+        <minor>4</minor>
+        <patch>0</patch>
+      </requirements>
+    </package>
+    <author>
+      <name>Kevin Jump</name>
+      <website>http://jumoo.uk</website>
+    </author>
+    <readme>
+      <![CDATA[
+      <p>
+      Push and pull all the database config and elements of your umbraco solution to and from the disk. 
+      </p>
+      <p>
+      Helps with Source Control, Continious Deployment and Multi Team Development.
+      </p>
+      <p>
+      This version syncs: DocTypes, MediaTypes, DataTypes, Macros, Languages, Dictionary Items, Templates and MemberTypes.
+      </p>]]>
+    </readme>
+  </info>
+
+  <DocumentTypes />
+  <Templates />
+  <Stylesheets />
+  <Macros />
+  <DictionaryItems />
+  <Languages />
+  <DataTypes />
+
+  <Actions>
+    <Action runat="install" alias="addDashboardSection" dashboardAlias="usyncBackOffice">
+      <section>
+        <areas>
+          <area>developer</area>
+        </areas>
+        <tab caption="uSync BackOffice">
+          <control>/App_Plugins/usync/uSyncDashboard.html</control>
+        </tab>
+      </section>
+    </Action>
+  </Actions>
+
+  <control />
+
+  <files><file><guid>dd459dea-d09e-4e0a-a5ed-7a2ab1bbda03.manifest</guid><orgPath>/App_Plugins/uSync</orgPath><orgName>package.manifest</orgName></file><file><guid>a0c8cc5b-583d-4d16-92f7-302c56dc1398.css</guid><orgPath>/App_Plugins/uSync</orgPath><orgName>uSyncDashboard.css</orgName></file><file><guid>4964428d-2878-48fc-8ed9-5614ee525f5f.html</guid><orgPath>/App_Plugins/uSync</orgPath><orgName>uSyncDashboard.html</orgName></file><file><guid>2209c3c3-bb37-4470-911f-209305c6dcbb.js</guid><orgPath>/App_Plugins/uSync</orgPath><orgName>uSyncDashboardController.js</orgName></file><file><guid>7f33db27-5e52-4768-b0c7-893cf5eb39e2.js</guid><orgPath>/App_Plugins/uSync</orgPath><orgName>uSyncDashboardService.js</orgName></file><file><guid>2b5f269e-e0df-42ae-ac14-4e230cb71710.dll</guid><orgPath>/bin</orgPath><orgName>Jumoo.uSync.BackOffice.dll</orgName></file><file><guid>50fe82da-6491-41cc-a6d2-44af1f80c9aa.dll</guid><orgPath>/bin</orgPath><orgName>Jumoo.uSync.Core.dll</orgName></file><file><guid>39751672-6ef7-4917-b9d4-05f37261df63.config</guid><orgPath>/config</orgPath><orgName>uSyncBackOffice.config</orgName></file><file><guid>2ae93894-5762-44c1-b772-b6fc10445b3f.Config</guid><orgPath>/config</orgPath><orgName>uSyncCore.Config</orgName></file></files>
+
+</umbPackage>

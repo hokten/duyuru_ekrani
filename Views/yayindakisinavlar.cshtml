@@ -1,0 +1,75 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+@using System.Collections.Generic;
+@using System.Globalization;
+
+@functions{
+  public JArray JsonDiziOlustur(List<int> veri, string ozellik_adi){
+    JArray veri_dizisi = new JArray();
+
+    foreach (int tekil_veri in veri) {
+      var content = Umbraco.TypedContent(tekil_veri);
+      string okunabilir_veri = content.GetPropertyValue<string>(ozellik_adi);
+      veri_dizisi.Add(okunabilir_veri);
+    }
+    return  veri_dizisi;
+  }
+}
+
+	@{
+		Layout = null;
+		  var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+	     Dictionary<string, string> yayinlanma_durumlari = new Dictionary<string, string>();
+	yayinlanma_durumlari.Add("AwaitingRelease", "Yayınlanma Zamanını Bekliyor");
+		yayinlanma_durumlari.Add("Published", "Yayında");
+		yayinlanma_durumlari.Add("Expired", "Yayından Kaldırılmış");
+		yayinlanma_durumlari.Add("Unpublished", "Yayınlanmamış");
+		
+		var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+		IEnumerable<IPublishedContent> publishedPages = umbracoHelper.TypedContentAtRoot()
+			.Where(m => m.DocumentTypeAlias.Equals("Kapsayici"))
+			.First()
+			.Descendants("Sinav")
+			.Where(m => DateTime.Now >= m.GetPropertyValue<DateTime>("sinav_tarihi_ve_saati").AddMinutes(-15) && DateTime.Now <= m.GetPropertyValue<DateTime>("sinav_tarihi_ve_saati").AddMinutes(15))
+			.OrderByDescending(m => m.GetPropertyValue<DateTime>("sinav_tarihi_ve_saati"));
+		  dynamic items = new JArray();
+
+		foreach(IPublishedContent tekil_sinav in publishedPages) {
+			dynamic satir = new JObject();
+			int ders_id = tekil_sinav.GetPropertyValue<int>("sinavin_dersi");
+      var ders_node = Umbraco.TypedContent(ders_id);
+      string derskodu = ders_node.GetPropertyValue<string>("dersin_kodu");
+      string dersadi = ders_node.GetPropertyValue<string>("dersin_adi");
+	  int program_id = tekil_sinav.GetPropertyValue<int>("dersin_programi");
+	  var programin_adi = Umbraco.TypedContent(program_id).GetPropertyValue<string>("programin_adi");
+
+      var sinav_tarihi = tekil_sinav.GetPropertyValue<DateTime>("sinav_tarihi_ve_saati").ToString("dd MMMM yyyy dddd", new CultureInfo("tr-TR"));
+	  var sinav_zamani = tekil_sinav.GetPropertyValue<DateTime>("sinav_tarihi_ve_saati").ToString("HH:mm");
+      int sorumlu_ogretim_elemani_id = tekil_sinav.GetPropertyValue<int>("dersin_sorumlu_ogretim_elemani");
+      var sorumlu_ogretim_elemani = Umbraco.TypedContent(sorumlu_ogretim_elemani_id).GetPropertyValue<string>("oegretim_elemani_ad_soyad");
+      var gzetmenler = tekil_sinav.GetPropertyValue<string>("sinav_gozetmenleri").Split(',').Select(Int32.Parse).ToList();
+      var slonlar = tekil_sinav.GetPropertyValue<string>("sinav_salonlari").Split(',').Select(Int32.Parse).ToList();
+
+      
+
+      satir.id = tekil_sinav.Id;
+	  satir.programadi = programin_adi;
+      satir.derskodu = derskodu;
+      satir.dersadi = dersadi;
+      satir.sinavtarihi = sinav_tarihi;
+	  satir.sinavzamani = sinav_zamani;
+
+      satir.derssorumlusu = sorumlu_ogretim_elemani;
+      satir.gozetmenler = JsonDiziOlustur(gzetmenler, "oegretim_elemani_ad_soyad");
+      satir.salonlar = JsonDiziOlustur(slonlar, "salonun_kodu");
+     
+      items.Add(satir);	
+		}
+		
+	  Response.ContentType = "application/json";
+  }
+  @Html.Raw(items)

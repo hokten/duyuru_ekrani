@@ -1,0 +1,90 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8"/>
+    <title>title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <link rel="stylesheet" href="css/style.css">
+	  	  <link rel="stylesheet" href="css/slick.css">
+
+  </head>
+  <body style="overflow:hidden">
+	<div id="basari" style="font-size:70px; height:100vh; text-align:center; color:white;padding: 40vh 0;">BAŞARILAR</div>
+<div style="color:white">Sinav Duyuru Paneli</div>
+<div id="app" class="slider">
+	<div class="wrap" v-for="(result, index) in results" v-bind:id="result.id">
+		<p class="programm">{{ result.programadi }}</p>
+	<table class="sinavsaatitablosu">
+		<tbody>
+		<tr class="derskodu">
+			<td>
+				<span class="label">Dersin Kodu</span>
+				<span class="value">{{ result.derskodu }}</span>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<span class="label">Dersin Adı</span>
+				<span class="value">{{ result.dersadi }}</span>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<span class="label">Sorumlu</span>
+				<span class="value">{{ result.derssorumlusu }} </span>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<span class="label">Sınav Tarihi</span>
+				<span class="value">{{ result.sinavtarihi }}</span>
+			</td>
+		</tr>
+		<tr class="dersadi">
+			<td>
+				<span class="label">Sınav Saati</span>
+				<span class="value blink_me">{{ result.sinavzamani }}</span>
+			</td>
+		</tr>
+					
+					
+		<tr class="dersadi">
+			<!-- 			<td><span class="label" style="vertical-align:middle">Görevliler</span><ul style="display:inline-block; list-style-type:none; margin:0; padding:0; vertical-align:middle"><li style="margin-left:0px; margin-bottom:4px; margin-top:4px" v-for="gozetmen in result.gozetmenler"><span style="background-color:rgb(200,80,80); color:white;border-radius: 4px 4px 4px 4px; -moz-border-radius: 4px 4px 4px 4px;-webkit-border-radius: 4px 4px 4px 4px;border: 0px solid #000000; padding-left:3px; padding-right:3px">{{ gozetmen }}</span></li></ul></td>
+ -->
+			
+			<td>
+				<span class="label" style="vertical-align:middle">Görevliler</span>
+				<ul style="display:inline-block; list-style-type:none; margin:0; padding:0; vertical-align:middle">
+					<li v-for="gozetmen in result.gozetmenler"><a href="#" class="gozetmen">{{ gozetmen }}</a></li>
+				</ul>
+			</td>
+		</tr>
+				  
+				<tr class="dersadi">
+			<td>
+				<span class="label" style="vertical-align:middle">Salonlar</span>
+					<ul style="display:inline-block; list-style-type:none; margin:0; padding:0; vertical-align:middle">
+              <li style="margin-right:5px; display:inline-block;" v-for="salon in result.salonlar">
+				  <span class="salon">{{ salon }}</span>
+				</li>
+            </ul>
+				  </td>
+		</tr>
+					
+			
+		</tbody>
+	</table>
+	</div>
+</div>
+	
+	  <script src="scripts/jquery.js"></script>
+	  <script src="scripts/slick.js"></script>
+	  <script src="scripts/vue.js"></script>
+	  <script src="scripts/axios.js"></script>
+	  <script src="scripts/autorefresh.js"></script>
+  </body>
+</html>

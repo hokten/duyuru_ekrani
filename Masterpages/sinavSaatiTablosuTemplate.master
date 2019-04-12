@@ -1,18 +1,14 @@
-﻿<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
 
 <asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
-	<div id="app">
-	<div class="sinavsaatitablosu" v-for="(result, index) in results">
-		<div class="program">Bilgisayar</div>
-		<div class="derskodu">
-			<div>Dersin Kodu</div>
-			<div>{{ result.dersin_kodu }} </div>
-		</div>
-		<div class="dersadi">
-			<div>Dersin Kodu</div>
-			<div>{{ result.dersin_adi }}</div>
-		</div>
-	</div>
-	</div>
-
+	<table border="1">
+		<tr>
+			<td>Dersin Adı</td>
+			<td><umbraco:Item field="dersin_adi" runat="server" /></td>
+		</tr>
+		<tr>
+			<td>Dersin Kodu</td>
+			<td><umbraco:Item field="dersin_kodu" runat="server" /></td>
+		</tr>
+	</table>
 </asp:Content>

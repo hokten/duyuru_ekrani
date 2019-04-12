@@ -1,0 +1,130 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using System
+@using System.IO
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+@using System.Collections.Generic;
+
+@functions{
+  public JArray JsonDiziOlustur(List<int> veri, string ozellik_adi){
+    JArray veri_dizisi = new JArray();
+    var contentService = ApplicationContext.Current.Services.ContentService;
+
+    foreach (int tekil_veri in veri) {
+      var content = contentService.GetById(tekil_veri);
+      string okunabilir_veri = content.GetValue<string>(ozellik_adi);
+      veri_dizisi.Add(okunabilir_veri);
+    }
+    return  veri_dizisi;
+  }
+}
+
+
+
+@{
+  Layout = null;
+	var kullanici = Members.GetCurrentMember();
+	var aktif_bolum_id = kullanici.GetPropertyValue<int>("bolumuu");
+	var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+	IPublishedContent aktif_bolum_node = umbracoHelper.TypedContent(aktif_bolum_id);
+	  int aktif_bolum_sinavlar_id = aktif_bolum_node.Descendants("Sinavlar").First().Id;
+	
+  string deneme = "";
+  int eklenen_id = 0;
+  dynamic eklenen = new JObject();
+
+  @* var kullanici_ismi = Members.GetCurrentMemberProfileModel().UserName; *@
+  Dictionary<string, string> yayinlanma_durumlari = new Dictionary<string, string>();
+  yayinlanma_durumlari.Add("AwaitingRelease", "Yayınlanma Zamanını Bekliyor");
+  yayinlanma_durumlari.Add("Published", "Yayında");
+  yayinlanma_durumlari.Add("Expired", "Yayından Kaldırılmış");
+  yayinlanma_durumlari.Add("Unpublished", "Yayınlanmamış");
+  var contentService = ApplicationContext.Current.Services.ContentService;
+
+
+  var bodyStream = new StreamReader(HttpContext.Current.Request.InputStream);
+  bodyStream.BaseStream.Seek(0, SeekOrigin.Begin);
+  var bodyText = bodyStream.ReadToEnd();
+  JObject json = JObject.Parse(bodyText);
+  string dersin_programi = (string)json["dersin_programi"];
+  string ders_sorumlusu = (string)json["ders_sorumlusu"];
+  string ders_kodu = (string)json["dersin_kodu"];
+  string tarih = (string)json["sinavtarihi"];
+  string saat = (string)json["saat"];
+  string gozetmenler = string.Join(",", json["gozetmenler"].Select(x => x));
+  string salonlar = string.Join(",", json["salonlar"].Select(x => x));
+  string tarihsaat = tarih + " " + saat;
+  DateTime aninSaati = DateTime.Now;
+  DateTime sinav_saati = DateTime.ParseExact(tarihsaat, "d-M-yyyy HH:mm", null);
+	  var yeni_sinav = contentService.CreateContent(ders_kodu, aktif_bolum_sinavlar_id, "Sinav", -1);
+
+  if(aninSaati < sinav_saati.AddMinutes(-15) ) {
+    yeni_sinav.SetValue("dersin_programi", dersin_programi);
+    yeni_sinav.SetValue("sinav_gozetmenleri", gozetmenler);
+    yeni_sinav.SetValue("sinav_salonlari", salonlar);
+    yeni_sinav.SetValue("sinav_tarihi_ve_saati", sinav_saati);
+    yeni_sinav.SetValue("dersin_sorumlu_ogretim_elemani", ders_sorumlusu);
+    yeni_sinav.SetValue("sinavin_dersi", ders_kodu);
+	yeni_sinav.ExpireDate = sinav_saati.AddMinutes(15); 
+	contentService.SaveAndPublishWithStatus(yeni_sinav);
+	@*yeni_sinav.ReleaseDate = sinav_saati.AddMinutes(-15); 
+    yeni_sinav.ExpireDate = sinav_saati.AddMinutes(15);
+    contentService.Save(yeni_sinav);*@
+
+    eklenen_id = yeni_sinav.Id;
+  }
+  else if(aninSaati < sinav_saati.AddMinutes(15)) {
+    yeni_sinav.SetValue("dersin_programi", dersin_programi);
+    yeni_sinav.SetValue("sinav_gozetmenleri", gozetmenler);
+    yeni_sinav.SetValue("sinav_salonlari", salonlar);
+    yeni_sinav.SetValue("sinav_tarihi_ve_saati", sinav_saati);
+    yeni_sinav.SetValue("dersin_sorumlu_ogretim_elemani", ders_sorumlusu);
+    yeni_sinav.SetValue("sinavin_dersi", ders_kodu);
+    yeni_sinav.ExpireDate = sinav_saati.AddMinutes(15); 
+    contentService.SaveAndPublishWithStatus(yeni_sinav);
+    eklenen_id = yeni_sinav.Id;
+  }
+
+  if(eklenen_id != 0) {
+    var tekil_sinav = contentService.GetById(eklenen_id);
+    int ders_id = tekil_sinav.GetValue<int>("sinavin_dersi");
+    var ders_node = contentService.GetById(ders_id);
+    string derskodu = ders_node.GetValue<string>("dersin_kodu");
+    string dersadi = ders_node.GetValue<string>("dersin_adi");
+    string e_ders = derskodu + " - " + dersadi;
+    var sinav_zamani = tekil_sinav.GetValue<DateTime>("sinav_tarihi_ve_saati").ToString("dd-MM-yyyy HH:mm");
+    int sorumlu_ogretim_elemani_id = tekil_sinav.GetValue<int>("dersin_sorumlu_ogretim_elemani");
+    var sorumlu_ogretim_elemani = contentService.GetById(sorumlu_ogretim_elemani_id).GetValue<string>("oegretim_elemani_ad_soyad");
+    var gzetmenler = tekil_sinav.GetValue<string>("sinav_gozetmenleri").Split(',').Select(Int32.Parse).ToList();
+    var slonlar = tekil_sinav.GetValue<string>("sinav_salonlari").Split(',').Select(Int32.Parse).ToList();
+
+    DateTime? expiredate = tekil_sinav.ExpireDate;
+    DateTime? releasedate = tekil_sinav.ReleaseDate;
+    string edate = "-";
+    string rdate = "-";
+    if(expiredate.HasValue) {
+      edate = ((DateTime)expiredate).ToString("dd-MM-yyyy HH:mm");
+    }
+    if(releasedate.HasValue) {
+      rdate = ((DateTime)releasedate).ToString("dd-MM-yyyy HH:mm");
+    }
+
+    eklenen.id = tekil_sinav.Id;
+    eklenen.ders = e_ders;
+    eklenen.sinavzamani = sinav_zamani;
+    eklenen.derssorumlusu = sorumlu_ogretim_elemani;
+    eklenen.gozetmenler = JsonDiziOlustur(gzetmenler, "oegretim_elemani_ad_soyad");
+    eklenen.salonlar = JsonDiziOlustur(slonlar, "salonun_kodu");
+    eklenen.yayinlanmasi_planlanan_zaman = rdate;
+    eklenen.yayindan_kaldirilma_zamani = edate;
+    eklenen.durum = yayinlanma_durumlari[tekil_sinav.Status.ToString()];
+
+  }
+
+
+  
+ @* Response.ContentType = "application/json"; *@
+}
+@Html.Raw(eklenen)

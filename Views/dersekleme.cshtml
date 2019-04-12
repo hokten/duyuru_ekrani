@@ -1,0 +1,34 @@
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json.Linq
+@using umbraco.MacroEngines
+@using umbraco.cms.businesslogic.datatype
+@using Umbraco.Core.Models
+@using System.Collections.Generic;
+
+@{
+	var contentService = ApplicationContext.Current.Services.ContentService;
+	string dersler = @"MOD202|KALIP HAZIRLAMA TEKNİKLERİ III|4|1|5|6
+MOD204|KİŞİYE ÖZEL GİYSİ TASARIMI|3|1|4|5
+MOD214|SUNUM TEKNİKLERİ|1|1|2|2
+MOD210|MARKA YÖNETİMİ ve PAZARLAMA|2|0|2|2
+MOD212|ÜRETİM PLANLAMASI|1|1|2|2
+MOD208|GİYSİ TASARIMI II|3|1|4|5
+MOD206|DRAPAJ|3|1|4|6
+MOD216|MESLEK ETİĞİ|2|0|2|2";
+		dersler = dersler.Replace('\n', '\r');
+    string[] lines = dersler.Split(new char[] { '\r' },
+        StringSplitOptions.RemoveEmptyEntries);
+
+var i=1;
+    foreach (string line in lines)
+    {
+		string[] columns = line.Split('|');
+		var yeni_ders = contentService.CreateContent(columns[0], 3764, "Ders", -1);
+		yeni_ders.SetValue("dersin_kodu", columns[0]);
+		yeni_ders.SetValue("dersin_adi", columns[1]);
+		contentService.Save(yeni_ders);		i++;
+    }
+	string sonuc = i + " tane ders eklendi";
+	@Html.Raw(sonuc)
+ 
+}

@@ -1,0 +1,173 @@
+  @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using Newtonsoft.Json;
+@{
+    Layout = null;
+	var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<style>
+	@@font-face {
+  font-family: JosefinBold;
+  src: url(/media/52532/josefinsans-bold.ttf);
+}
+html, body {
+	background-color:#111111;
+/*overflow-y:hidden;*/
+	margin:0;
+
+}
+.marquee {
+	background-color:#111111;
+	width:100vw;
+margin:0;
+  background: #FFFFFF;
+}
+.marquee img {
+	vertical-align:middle;
+	
+		background-color:#444444;
+border:1px solid #111111;
+	height:97vh;
+	margin-left:auto;
+	margin-right:auto;
+	
+
+	-webkit-box-shadow: 0px 0px 6px 3px rgba(72, 63, 63, 0.84); 
+box-shadow: 0px 0px 6px 3px rgba(72, 63, 63, 0.84);
+}
+.innerWrap {
+	width:100%;
+				background-color:#dddddd;
+
+}
+.innerWrap div {
+	height:100vh;
+	text-align:center;
+	-webkit-transform: translateZ(0)
+
+}
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+	
+	
+
+	</style>
+	
+	
+  </head>
+
+  <body>
+
+		<div id="container" class="marquee ver">
+				<div id="resimler" class="innerWrap">
+			  <div><span class="helper"></span><img id="aktif_resim" src="" /></div>
+		</div>
+			</div>
+			
+		<div id="container1" class="marquee ver" style="display:hidden">
+				<div id="resimler" class="innerWrap">
+
+			@{
+				var i=1;
+			foreach (var item in Model.Content.Children()) {
+				var id = "resim" + i;
+			  <div><span class="helper"></span><img id="@id" src="@item.GetPropertyValue("imageFile")" /></div>
+				  i = i+1;
+			}
+	  }
+		</div>
+			</div>
+
+
+
+<script>
+			(function() {
+			
+						function tekrarla(){
+							var aktif_resim = document.querySelector('#aktif_resim');
+							var next_resim = document.querySelector('#resim'+i);
+							
+							if(document.body.contains(next_resim)) {
+								aktif_resim.setAttribute('src', next_resim.getAttribute('src'));
+								aktif_resim.style.height = "90vh";
+								console.log(aktif_resim);
+								
+							}
+							else {
+								i = 1;
+								aktif_resim.setAttribute('src', document.querySelector('#resim1').getAttribute('src'));
+								aktif_resim.style.height = "90vh";
+
+							}
+							i++;
+						}
+						
+						var i=1;
+						var myVar = setInterval(tekrarla, 6000);
+						})();
+
+
+						
+						
+						/*
+						$('#container').easyTicker({
+	direction: 'up',
+	easing: 'linear',
+	speed: 50,
+	interval: 5000,
+	height: 'auto',
+	visible: 0,
+	mousePause: 0,
+
+});
+						
+			var body = $("html, body");
+						var i=0;
+					function yap() {
+						if(i == $('img').length) location.reload(true);
+						var current_resim = $("img").eq(i);
+						console.log(current_resim);
+						var resim_ust_pozisyon = current_resim.offset().top;
+						var resim_yuksekligi = current_resim.outerHeight();
+						var ekran_yuksekligi = $(window).height();
+					$('html, body').animate(
+					{scrollTop: ekran_yuksekligi},
+								3000,
+						'easeInOutSine', function() {
+							$('#container').append(current_resim.detach());
+							
+						
+						});
+						console.log(i);
+						
+						//var gecen = $("img").eq(i).remove();
+							//$('#container').append(gecen);
+
+							i++;
+					
+							
+							
+						
+						
+						console.log("fonksiyon bitti " + i);
+					};						
+						
+						setInterval(yap, 3000); //no parenthesis
+
+					 
+					
+				*/
+
+</script>
+</body>
+</html>

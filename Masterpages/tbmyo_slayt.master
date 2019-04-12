@@ -1,0 +1,49 @@
+<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
+ <!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<!-- <META http-equiv="Refresh" content="60; url=http://ekran.amasya.edu.tr/"> -->
+ <!-- duyuru başlangıç-->    
+ 
+
+ <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+ 
+   
+    
+    <!-- duyuru bitiş-->
+    
+    
+    
+    <!-- slayt başlangıç-->
+
+  
+   <script src="/scripts/jquery.js"></script>
+    <script src="/Scripts/revolutio-slider-func.js"></script>
+    <script src="/Scripts/jquery.themepunch.revolution.min.js"></script>
+  <link href="/css/bootstrap.css" rel="stylesheet">
+  
+  <section class="slider">
+       <div class="fullwidthbanner-container">
+          <div class="fullwidthbanner">
+            <ul>
+				<umbraco:Macro source="1094" Alias="Tbmyo_slider" runat="server"></umbraco:Macro>
+            
+           <!--  <umbraco:Macro source="27587" Alias="Slider" runat="server"></umbraco:Macro>-->
+                                
+            </ul>
+
+            <div class="tp-bannertimer tp-bottom"></div>
+          </div>
+        </div>
+</section>
+   
+    <!--slayt bitiş-->
+    
+    
+</body>
+</html>
+</asp:Content>

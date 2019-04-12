@@ -1,13 +1,42 @@
 /* DivTable.com */
 @font-face {
     font-family: myFirstFont;
-    src: url(../media/16/oxygen.otf);
+    /*src: url(../media/52811/oxygen.otf);*/
+	src: url(../media/52811/oxygen.otf);
+	 font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: myFirstFontb;
+    src: url(../media/52820/oxygen-bold.otf);
+	    font-style: normal;
+
+	font-weight: bold;
+
+}
+
+@font-face {
+    font-family: myFirstFonti;
+    src: url(../media/52814/oxygen-italic.otf);
+    font-weight: normal;
+
+    font-style: italic, oblique;
+
+}
+
+@font-face {
+    font-family: myFirstFontib;
+    src: url(../media/52817/oxygen-bolditalic.otf);
+	font-weight: bold;
+	   font-style: italic, oblique;
+
+
 }
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url(../media/28/material.otf) format('woff2');
+  src: url(/media/52808/material.otf) format('woff2');
 }
 
 .material-icons {
@@ -64,7 +93,7 @@ td {
 .sinavsaatitablosu {
 	display:table;
 	width: 100%;
-	font-size:30px;
+	font-size:35px;
 	border-collapse: seperate;
 	border-spacing:2px;
 	margin-bottom:10px;
@@ -81,23 +110,20 @@ td {
 
 .derskodu .label {
 	display:inline-block;
- 	width : 35%;
+ 	width : 30%;
 	color:#d99127;
 }
 		
 .dersadi .label {
-	display:inline-block;
- 	width : 35%;
+				display:inline-block;
+
+ 	width : 30%;
 	color:#d99127;
 }
 		
 .derskodu .value {
-display:inline-block;
 	border-top:1px dotted #f44336	;
 	border-bottom:1px dotted #f44336;
-	margin:15px;
-	padding-top:5px;
-	padding-bottom:5px;
 	color:#d44c9b;
 	background-color:rgb(247, 247, 247);
 
@@ -107,18 +133,66 @@ display:inline-block;
 	display:inline-block;
 	border-top:1px dotted #f44336	;
 	border-bottom:1px dotted #f44336;
-	margin:15px;
-	padding-top:5px;
-	padding-bottom:5px;
 	color:#2f3643;
-			font-weight:bold;
+	font-weight:bold;
 	background-color:rgb(247, 247, 247);
-
 }
 
 	
-		
-		
+.gozetmen {
+	-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		color: #FFFFFF;
+		font-size: 28px;
+		font-weight: 500;
+		padding: 6px;
+		background-color: #C85050;
+		text-decoration: none;
+		display: inline-block;
+	}
+.salon {
+	-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		color: #FFFFFF;
+		font-size: 28px;
+		font-weight: 500;
+		padding: 6px;
+		background-color: #50aa50;
+		text-decoration: none;
+		display: inline-block;
+	}
+.blink_me {	
+    animation-duration: 2000ms;
+    animation-name: blink;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    -webkit-animation:blink 2000ms infinite; /* Safari and Chrome */
+}
+@keyframes blink {
+    from {
+        color:red;
+    }
+    to {
+        color:black;
+    }
+}
+@-webkit-keyframes blink {
+    from {
+        color:red;
+    }
+    to {
+        color:black;
+    }
+}
+
+
+
+
+
+
+
 /* Logi formu */
 		  #panell{
      margin-top: 100px;
@@ -143,4 +217,4 @@ display:inline-block;
    #username,#password{
     margin-left: 20px;
     margin-right: 20px;
-   }/* EDITOR PROPERTIES - PLEASE DON'T DELETE THIS LINE TO AVOID DUPLICATE PROPERTIES */
+/* EDITOR PROPERTIES - PLEASE DON'T DELETE THIS LINE TO AVOID DUPLICATE PROPERTIES */

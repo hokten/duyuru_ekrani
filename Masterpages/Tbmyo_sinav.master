@@ -1,0 +1,105 @@
+<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
+ <!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+ <META http-equiv="Refresh" content="60; url=http://ekran.amasya.edu.tr/">
+	  
+	  
+ <!-- duyuru başlangıç-->    
+
+
+ <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href="/css/tbmyo_ekran.css" rel="stylesheet">
+  <script src="/Scripts/tbmyo_ekran.js"></script>
+  <script language="javascript">
+    $(document).ready(function () {
+      $("div").smartmarquee();
+    });
+  </script>
+  <style type="text/css">
+    body {
+      font-family: tahoma;
+      font-size: 2em;
+		  width:100%
+    }
+    a { cursor: pointer }
+    .example {
+      width: 100%;
+      -moz-box-shadow: 1px 1px 5px #999;
+      -webkit-box-shadow: 1px 1px 5px #999;
+      box-shadow: 1px 1px 5px #999;
+    }
+    .example .container {
+      margin: 0;
+      padding: 0;
+    }
+    .example .container li {
+		  width: 100%;
+      margin: 0 0 0 5px;
+      padding: 5px 0 5px 0;
+      border-bottom: 1px dotted #999
+       
+    }
+  </style>
+</head>
+
+<body>
+	<div style="width:99%; text-align:center">
+		TEKNİK BİLİMLER MESLEK YÜKSEKOKULUSINAV SALONU BİLGİ EKRANI
+	</div>
+  <div class="smartmarquee example">
+    <ul class="container">
+        <umbraco:Macro source="1055" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+	    <umbraco:Macro source="1056" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1057" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1058" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1059" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1060" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1062" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1063" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1064" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1065" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1066" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1067" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1068" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+		<umbraco:Macro source="1069" Alias="Tbmyo_duyuru" runat="server"></umbraco:Macro>
+    </ul>
+  </div>
+
+    
+    <!-- duyuru bitiş-->
+    
+    
+    
+    <!-- slayt başlangıç-->
+
+   
+   <script src="/scripts/jquery.js"></script>
+    <script src="/Scripts/revolutio-slider-func.js"></script>
+    <script src="/Scripts/jquery.themepunch.revolution.min.js"></script>
+  <link href="/css/bootstrap.css" rel="stylesheet">
+  
+  <section class="slider">
+       <div class="fullwidthbanner-container">
+          <div class="fullwidthbanner">
+            <ul><umbraco:Macro source="27587" Alias="tbmyo_slider" runat="server"></umbraco:Macro>
+            
+           <!--  <umbraco:Macro source="27587" Alias="Slider" runat="server"></umbraco:Macro>-->
+                                
+            </ul>
+
+            <div class="tp-bannertimer tp-bottom"></div>
+          </div>
+        </div>
+</section>
+    
+    <!--slayt bitiş-->
+    
+    
+</body>
+</html>
+</asp:Content>
