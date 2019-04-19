@@ -20,11 +20,9 @@
 }
 
 @{
-	Layout = null;
-	var kullanici = Members.GetCurrentMember();
-	int aktif_bolum_id = kullanici.GetPropertyValue<int>("bolumuu");
-	
-	
+  Layout = null;
+  var kullanici = Members.GetCurrentMember();
+  int aktif_bolum_id = kullanici.GetPropertyValue<int>("bolumuu");
   Dictionary<string, string> yayinlanma_durumlari = new Dictionary<string, string>();
   yayinlanma_durumlari.Add("AwaitingRelease", "Yayınlanma Zamanını Bekliyor");
   yayinlanma_durumlari.Add("Published", "Yayında");
@@ -38,88 +36,77 @@
   if(aktif_program != null) {
     IEnumerable<IContent> yayinda_olan_sinavlar = contentService.GetDescendants(aktif_program).Where(x => x.ContentType.Alias.Equals("Sinav"));
     foreach(var tekil_sinav in yayinda_olan_sinavlar) {
-		var sinav_zamani_datetime = tekil_sinav.GetValue<DateTime>("sinav_tarihi_ve_saati");
-		if(sinav_zamani_datetime.AddMinutes(15) < DateTime.Now) {
-			if(tekil_sinav.Published) {contentService.UnPublish(tekil_sinav);}
-			contentService.Delete(tekil_sinav);
-			umbraco.library.RefreshContent();
-		}
-		else if(DateTime.Now >= sinav_zamani_datetime.AddMinutes(-15) && DateTime.Now <= sinav_zamani_datetime.AddMinutes(15))  
-		{
+      var sinav_zamani_datetime = tekil_sinav.GetValue<DateTime>("sinav_tarihi_ve_saati");
 
-      dynamic satir = new JObject();
-      int ders_id = tekil_sinav.GetValue<int>("sinavin_dersi");
-      var ders_node = contentService.GetById(ders_id);
-      string derskodu = ders_node.GetValue<string>("dersin_kodu");
-      string dersadi = ders_node.GetValue<string>("dersin_adi");
-      var sinav_zamani = tekil_sinav.GetValue<DateTime>("sinav_tarihi_ve_saati").ToString("dd-MM-yyyy HH:mm");
-      int sorumlu_ogretim_elemani_id = tekil_sinav.GetValue<int>("dersin_sorumlu_ogretim_elemani");
-      var sorumlu_ogretim_elemani = contentService.GetById(sorumlu_ogretim_elemani_id).GetValue<string>("oegretim_elemani_ad_soyad");
-      var gzetmenler = tekil_sinav.GetValue<string>("sinav_gozetmenleri").Split(',').Select(Int32.Parse).ToList();
-      var slonlar = tekil_sinav.GetValue<string>("sinav_salonlari").Split(',').Select(Int32.Parse).ToList();
-
-      DateTime? releasedate = tekil_sinav.ReleaseDate;
-			      DateTime? expiredate = tekil_sinav.ExpireDate;
-
-      string edate = null;
-      string rdate = null;
-      if(expiredate.HasValue) {
-        edate = ((DateTime)expiredate).ToString("dd-MM-yyyy HH:mm");
+      if(sinav_zamani_datetime.AddMinutes(15) < DateTime.Now) {
+        if(tekil_sinav.Published) {contentService.UnPublish(tekil_sinav);}
+        contentService.Delete(tekil_sinav);
+        umbraco.library.RefreshContent();
       }
-      if(releasedate.HasValue) {
-        rdate = ((DateTime)releasedate).ToString("dd-MM-yyyy HH:mm");
-      }
+      else {
+        dynamic satir = new JObject();
+        string durum = "Yayında";
+        int ders_id = tekil_sinav.GetValue<int>("sinavin_dersi");
+        var ders_node = contentService.GetById(ders_id);
+        string derskodu = ders_node.GetValue<string>("dersin_kodu");
+        string dersadi = ders_node.GetValue<string>("dersin_adi");
+        var sinav_zamani = tekil_sinav.GetValue<DateTime>("sinav_tarihi_ve_saati").ToString("dd-MM-yyyy HH:mm");
+        int sorumlu_ogretim_elemani_id = tekil_sinav.GetValue<int>("dersin_sorumlu_ogretim_elemani");
+        var sorumlu_ogretim_elemani = contentService.GetById(sorumlu_ogretim_elemani_id).GetValue<string>("oegretim_elemani_ad_soyad");
+        var gzetmenler = tekil_sinav.GetValue<string>("sinav_gozetmenleri").Split(',').Select(Int32.Parse).ToList();
+        var slonlar = tekil_sinav.GetValue<string>("sinav_salonlari").Split(',').Select(Int32.Parse).ToList();
+        DateTime? expiredate = tekil_sinav.ExpireDate;
+        string edate = "-";
+        string rdate = "-";
 
+        if(expiredate.HasValue) { edate = ((DateTime)expiredate).ToString("dd-MM-yyyy HH:mm");}
 
+        if(DateTime.Now < sinav_zamani_datetime.AddMinutes(-15)) {
+          rdate = sinav_zamani_datetime.AddMinutes(-15).ToString("dd-MM-yyyy HH:mm");
+          durum = "Yayınlanma Zamanını Bekliyor";
 
-      satir.id = tekil_sinav.Id;
-      @* satir.username = kullanici_ismi; *@
-      satir.derskodu = derskodu;
-      satir.dersadi = dersadi;
-      satir.sinavzamani = sinav_zamani;
-      satir.derssorumlusu = sorumlu_ogretim_elemani;
-      satir.gozetmenler = JsonDiziOlustur(gzetmenler, "oegretim_elemani_ad_soyad");
-      satir.salonlar = JsonDiziOlustur(slonlar, "salonun_kodu");
-      satir.yayinlanmasi_planlanan_zaman = rdate;
-      satir.yayindan_kaldirilma_zamani = edate;
-      satir.durum = yayinlanma_durumlari[tekil_sinav.Status.ToString()];
+        }
+        satir.id = tekil_sinav.Id;
+          satir.derskodu = derskodu;
+        satir.dersadi = dersadi;
+        satir.sinavzamani = sinav_zamani;
+        satir.derssorumlusu = sorumlu_ogretim_elemani;
+        satir.gozetmenler = JsonDiziOlustur(gzetmenler, "oegretim_elemani_ad_soyad");
+        satir.salonlar = JsonDiziOlustur(slonlar, "salonun_kodu");
+        satir.yayinlanmasi_planlanan_zaman = rdate;
+        satir.yayindan_kaldirilma_zamani = edate;
+        satir.durum = durum;
 
-      items.Add(satir);
-      
-      @*
+        items.Add(satir);
+
+        @*
         satir.gozetmenler = new JArray(gozetmenler.Select(s => JToken.FromObject(s)));
-
-      items.Add(satir);
-      <h2>index</h2>
-
-
+        items.Add(satir);
+        <h2>index</h2>
         @Html.Raw(serializer.Serialize(tekil))
-
         <b>Dersin Programları :</b>
         @tekil.GetValue("dersin_programi")
         <br />
         <b>Sinav salonları:</b>
         @tekil.GetValue("sinav_salonlari")
-
         @tekil.GetValue("sinav_gozetmenleri")
         <br />
-
         IPublishedContent program = Umbraco.TypedContent(tekil_si.GetValue("dersin_programi"));
-      *@
-		}
+        *@
+      }
     }
   }
 
-    dynamic product = new JObject();
-    product.ProductName = "Elbow Grease";
-    product.Enabled = true;
-    product.Price = 4.90m;
-    product.StockCount = 9000;
-    product.StockValue = 44100;
-    product.Tags = new JArray(
-        new JObject(new JProperty("Date", DateTime.Now), new JProperty("Dae","dd")),
-        new JObject(new JProperty("Date", DateTime.Now), new JProperty("Dae","ddnn"))
-        );
-    Response.ContentType = "application/json";
-  }
-  @Html.Raw(items)
+  dynamic product = new JObject();
+  product.ProductName = "Elbow Grease";
+  product.Enabled = true;
+  product.Price = 4.90m;
+  product.StockCount = 9000;
+  product.StockValue = 44100;
+  product.Tags = new JArray(
+      new JObject(new JProperty("Date", DateTime.Now), new JProperty("Dae","dd")),
+      new JObject(new JProperty("Date", DateTime.Now), new JProperty("Dae","ddnn"))
+      );
+  Response.ContentType = "application/json";
+}
+@Html.Raw(items)
